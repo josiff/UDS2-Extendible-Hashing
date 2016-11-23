@@ -10,7 +10,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
     public abstract class Record 
     {
         public bool IsValid { get; set; }
-
+        public int Key { get; set; }
 
         public abstract int GetHash();
         //Bitove pole
@@ -23,5 +23,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         public abstract BitArray ToByteArray(Record data);
         public abstract Record FromByteArray(BitArray bitArray);
+        
+
     }
 }
