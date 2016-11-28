@@ -1,19 +1,23 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataStructuresLibrary.Extendible_Hashing;
 
 namespace DataStructureLogic
 {
-    class Auto
+   public class Auto : Record
     {
         #region Properties
         ///Záznam o aute má uložené nasledujúce informácie:
         ///Evidenčné číslo vozidla(unikátny reťazec s maximálnou dĺžkou 7 znakov)
         public int EvidencneCisloVozidla { get; set; }
+        public const int EvidencneCisloVozidlaMaxLength = 7; 
         ///VIN číslo(unikátny reťazec s maximálnou dĺžkou 17 znakov)
         public string VinCislo { get; set; }
+        public const int VinCisloMaxLength = 17;
         ///Počet náprav(celé číslo)
         public int PocetNaprav { get; set; }
         ///Prevádzková hmotnosť(celé číslo)
@@ -64,5 +68,41 @@ namespace DataStructureLogic
         }
         #endregion
 
+
+        #region Override methods from Block
+
+          public override int GetHash()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override BitArray GetBitSet()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int GetSize()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool Equals()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override BitArray ToByteArray(Record data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Record FromByteArray(BitArray bitArray)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+      
     }
 }

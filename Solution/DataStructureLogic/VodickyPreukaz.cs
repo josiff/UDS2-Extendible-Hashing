@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataStructureLogic
 {
-    class VodickyPreukaz
+ public   class VodickyPreukaz
     {
         #region Properties 
         //        Záznam o vodičskom preukaze má uložené nasledujúce informácie:

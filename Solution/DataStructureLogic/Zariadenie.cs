@@ -27,8 +27,7 @@ namespace DataStructureLogic
     class Zariadenie
     {
         #region Auto
-
-        
+   
 
         
         ///Pre záznamy o aute: 

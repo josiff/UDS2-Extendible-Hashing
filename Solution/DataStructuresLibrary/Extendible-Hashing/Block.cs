@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataStructuresLibrary.Extendible_Hashing
 {
-    class Block
+    public class Block
     {
         /// <summary>
         /// Bloky dat
@@ -22,9 +22,18 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <summary>
         /// Hlbka bloku
         /// </summary>
-        public Block Hlbka { get; set; }
+        public int Hlbka { get; set; }
 
 
+        public int Size { get; set; }
+
+        
+
+        /// <summary>
+        /// Zo suboru co mi prislo, tak naplnim record. 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public BitArray ToByteArray(object data)
         {
             // return BitConverter.GetBytes(data);          
@@ -36,6 +45,12 @@ namespace DataStructuresLibrary.Extendible_Hashing
         {
             throw new NotImplementedException();
         }
+
+        public bool Equals(object obj)
+        {
+            return false;
+        }
+
 
     }
 }

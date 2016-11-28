@@ -48,6 +48,12 @@
     <Compile Include="VodickyPreukaz.cs" />
     <Compile Include="Zariadenie.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataStructuresLibrary\DataStructuresLibrary.csproj">
+      <Project>{BCBEEBC9-FB83-4FD1-A8D7-5B39E49C687B}</Project>
+      <Name>DataStructuresLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

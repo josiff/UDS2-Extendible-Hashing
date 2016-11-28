@@ -20,8 +20,8 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         public abstract bool Equals();
 
-
         public abstract BitArray ToByteArray(Record data);
+
         public abstract Record FromByteArray(BitArray bitArray);
         
 

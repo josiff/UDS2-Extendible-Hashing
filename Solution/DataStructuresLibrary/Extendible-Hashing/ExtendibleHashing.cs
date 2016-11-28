@@ -193,5 +193,16 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         
         #endregion
+
+
+        public Block VyhladajBlock()
+        {
+            return default(Block);
+        }
+
+
+
+
+
     }
 }
