@@ -10,20 +10,31 @@ namespace DataStructuresLibrary.Extendible_Hashing
     public abstract class Record 
     {
         public bool IsValid { get; set; }
-        public int Key { get; set; }
+        public int _pocet_bitov_isvalid = 1;
+        public string Key { get; set; }
+        
+        /// <summary>
+        /// Adresa bloku s datami tohto recordu
+        /// </summary>
+        public int Address { get; set; }
+
+        public int _pocet_bitov_address = 4; 
+        public int Size { get; set; }
 
         public abstract int GetHash();
         //Bitove pole
-        public abstract BitArray GetBitSet();
+        public abstract byte[] GetBitSet();
 
         public abstract int GetSize();
+        public abstract int GetAddressSize();
 
-        public abstract bool Equals();
+        public abstract override bool Equals(object obj);
 
-        public abstract BitArray ToByteArray(Record data);
+        public abstract byte[] ToByteArray(bool allData = true);
 
-        public abstract Record FromByteArray(BitArray bitArray);
-        
+        public abstract Record FromByteArray(byte[] bitArray);
+
+        public abstract override string ToString();
 
     }
 }
