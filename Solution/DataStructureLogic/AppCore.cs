@@ -9,8 +9,8 @@ namespace DataStructureLogic
  public   class AppCore
     {
         private Zariadenie zariadenie;
-        private int maxEvidenceCislo = 17;
-        private int maxVinCislo = 4;
+        private int maxEvidenceCislo = 7;
+        private int maxVinCislo = 17;
         private int maxMeno = 35;
         private int maxPriezvisko = 35;
 
@@ -217,8 +217,11 @@ namespace DataStructureLogic
             {
                 errorHlasky += "Nebol zadany spravny vstup pre: " + "Dopravne priestupky.\n";
             }
-             errorHlasky += (menoVodica=="") ? "Nebol zadany spravny vstup pre: " + "Meno vodica.\n" : "";
-             errorHlasky += (priezviskoVodica == "") ? "Nebol zadany spravny vstup pre: " + "Priezvisko vodica.\n" : "";
+            errorHlasky += (menoVodica == "") ? "Nebol zadany spravny vstup pre: " + "Meno vodica.\n" : "";
+            errorHlasky += (priezviskoVodica == "") ? "Nebol zadany spravny vstup pre: " + "Priezvisko vodica.\n" : "";
+            errorHlasky += (menoVodica.Length > maxMeno) ? "Meno vodica musi obsahovat najviac 35 znakov.\n" : "";
+            errorHlasky += (priezviskoVodica.Length > maxPriezvisko) ?  "Priezvisko vodica musi obsahovat najviac 35 znakov.\n" : "";
+
 
             if (errorHlasky == "")
             {
@@ -266,8 +269,8 @@ namespace DataStructureLogic
         /// <param name="zakazViestVozidlo"></param>
         /// <param name="dopravnePriestupky"></param>
         /// <returns></returns>
-        public string ZmenaUdajovVodicky(string evidencneCisloPreukazus, string menoVodica,
-            string priezviskoVodica,
+        public string ZmenaUdajovVodicky( string menoVodica,
+            string priezviskoVodica, string evidencneCisloPreukazus,
             DateTime ukonceniePlatnosti, bool zakazViestVozidlo, string dopravnePriestupkys)
         {
             string errorHlasky = "";
@@ -284,17 +287,47 @@ namespace DataStructureLogic
             errorHlasky += (menoVodica == "") ? "Nebol zadany spravny vstup pre: " + "Meno vodica.\n" : "";
             errorHlasky += (priezviskoVodica == "") ? "Nebol zadany spravny vstup pre: " + "Priezvisko vodica.\n" : "";
 
+            errorHlasky += (menoVodica.Length > maxMeno) ? "Meno vodica musi obsahovat najviac 35 znakov.\n" : "";
+            errorHlasky += (priezviskoVodica.Length > maxPriezvisko) ? "Priezvisko vodica musi obsahovat najviac 35 znakov.\n" : "";
+
             if (errorHlasky == "")
             {
                 return zariadenie.ZmenaUdajovVodicky(evidencneCisloPreukazu, menoVodica, priezviskoVodica, ukonceniePlatnosti, zakazViestVozidlo, dopravnePriestupky)
-                    ? "Vodicky bol uspesne pridany. "
-                    : "Pridanie vodickeho preukazu bolo neuspesne. ";
+                    ? "Vodicky bol uspesne zmeneny. "
+                    : "Zmena vodickeho preukazu bola neuspesna. ";
             }
             else
             {
                 return errorHlasky;
             }
         }
+
+        #endregion
+
+
+
+        #region Generovanie udajov
+
+        public string VygenerujAuta(string pocets)
+        {
+            int pocet;
+            if (!Int32.TryParse(pocets, out pocet))
+            {
+                return "Nebol zadany spravny pocet na generovanie.";
+            }
+            return "todo urobit";
+        }
+
+public string VygenerujVodickePreukazy(string pocets)
+        {
+            int pocet;
+            if (!Int32.TryParse(pocets, out pocet))
+            {
+                return "Nebol zadany spravny pocet na generovanie.";
+            }
+            return "todo urobit";
+        }
+
 
         #endregion
 

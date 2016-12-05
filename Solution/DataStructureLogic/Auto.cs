@@ -41,7 +41,7 @@ namespace DataStructureLogic
         public DateTime KoniecPlatnostiEK { get; set; }
 
         private int _pocet_bitov_datum_ek = 10;
-        public int Size { get; private set; }
+       // public int Size { get; private set; }
         #endregion
 
 
