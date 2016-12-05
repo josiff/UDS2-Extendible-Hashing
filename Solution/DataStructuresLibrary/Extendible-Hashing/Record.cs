@@ -12,6 +12,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         public bool IsValid { get; set; }
         public int _pocet_bitov_isvalid = 1;
         public string Key { get; set; }
+        public int _pocet_bitov_key = 4;
         
         /// <summary>
         /// Adresa bloku s datami tohto recordu
