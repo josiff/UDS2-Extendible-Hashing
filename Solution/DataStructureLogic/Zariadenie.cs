@@ -24,7 +24,7 @@ namespace DataStructureLogic
     /// Je potrebné zabezpečiť, aby zariadenie pracovalo aj v offline režime 
     /// a kontrola vozidla podľa EČV bola čo najrýchlejšia. 
     /// </summary>
-    class Zariadenie
+ public  class Zariadenie
     {
         #region Auto
    
@@ -44,7 +44,7 @@ namespace DataStructureLogic
             return "todo";
         }
 
-        public Auto VyhladajAutoEvidencne(string evidencneCislo)
+        private Auto VyhladajAutoEvidencne(string evidencneCislo)
         {
             return default(Auto);
         }
@@ -61,7 +61,7 @@ namespace DataStructureLogic
             Auto auto = VyhladajAutoVin(vinCislo);
             return "todo";
         }
-        public Auto VyhladajAutoVin(string vinCislo)
+        private Auto VyhladajAutoVin(string vinCislo)
         {
             return default(Auto);
         }
@@ -78,12 +78,12 @@ namespace DataStructureLogic
         /// <param name="koniecPlatnostiStk"></param>
         /// <param name="koniecPlatnostiEk"></param>
         /// <returns></returns>
-        public bool PridanieAuto(int evidencneCisloVozidla, string vinCislo, int pocetNaprav, int prevadzkovaHmotnost, bool vPatrani, DateTime koniecPlatnostiStk, DateTime koniecPlatnostiEk)
+        public bool PridanieAuto(string evidencneCisloVozidla, string vinCislo, int pocetNaprav, int prevadzkovaHmotnost, bool vPatrani, DateTime koniecPlatnostiStk, DateTime koniecPlatnostiEk)
         {
             Auto auto = new Auto(evidencneCisloVozidla, vinCislo, pocetNaprav, prevadzkovaHmotnost, vPatrani, koniecPlatnostiStk, koniecPlatnostiEk);
             return false;
         }
-        public bool PridanieAuto(Auto auto)
+        private bool PridanieAuto(Auto auto)
         {
            
             return false;
@@ -132,7 +132,7 @@ namespace DataStructureLogic
         /// <param name="koniecPlatnostiStk"></param>
         /// <param name="koniecPlatnostiEk"></param>
         /// <returns></returns>
-        public bool ZmenaUdajovAute(int evidencneCislo, string vinCislo = null, int pocetNaprav=1, int prevadzkovaHmotnost=550, bool vPatrani = false, DateTime koniecPlatnostiStk = default(DateTime), DateTime koniecPlatnostiEk =default(DateTime))
+        public bool ZmenaUdajovAute(string evidencneCislo, string vinCislo = null, int pocetNaprav=1, int prevadzkovaHmotnost=550, bool vPatrani = false, DateTime koniecPlatnostiStk = default(DateTime), DateTime koniecPlatnostiEk =default(DateTime))
         {
             return false;
         }
@@ -140,7 +140,6 @@ namespace DataStructureLogic
 
         #region Vodicky Preukaz
         
-       
         /// <summary>
         /// Pre záznamy o vodičskom preukaze: 
         /// Vyhľadanie 
@@ -154,7 +153,7 @@ namespace DataStructureLogic
             VodickyPreukaz vodicky = VyhladajVodickyPreukaz(cisloVodickeho);
             return "todo";
         }
-        public VodickyPreukaz VyhladajVodickyPreukaz(int cisloVodickeho)
+        private VodickyPreukaz VyhladajVodickyPreukaz(int cisloVodickeho)
         {
             return default(VodickyPreukaz);
         }
