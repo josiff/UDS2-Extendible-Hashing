@@ -31,8 +31,12 @@ namespace DataStructuresLibrary.Extendible_Hashing
         public abstract override bool Equals(object obj);
 
         public abstract byte[] ToByteArray(bool allData = true);
-
-        public abstract Record FromByteArray(byte[] bitArray);
+        /// <summary>
+        /// Metoda naplni danu class datami z array of bytov
+        /// </summary>
+        /// <param name="byteArray">pole bytov<param>
+        /// <param name="hasAdress"></param>
+        public abstract void FromByteArray(byte[] byteArray, bool hasAdress=true);
 
         public abstract override string ToString();
 

@@ -17,7 +17,7 @@ namespace ConsoleApplication_Hashing
             Number = number;
         }
 
-        public override Record FromByteArray(byte[] bitArray)
+     public override void FromByteArray(byte[] byteArray, bool hasAdress = true)
         {
             throw new NotImplementedException();
         }

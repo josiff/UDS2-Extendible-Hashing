@@ -34,14 +34,14 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public BitArray ToByteArray(object data)
+        public byteArray ToByteArray(object data)
         {
             // return BitConverter.GetBytes(data);          
             throw new NotImplementedException();
 
         }
 
-        public object FromByteArray(BitArray bitArray)
+        public object FromByteArray(byteArray byteArray)
         {
             throw new NotImplementedException();
         }
