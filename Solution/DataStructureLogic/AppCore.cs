@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace DataStructureLogic
 {
-    class App
+ public   class AppCore
     {
         private Zariadenie zariadenie;
         private int maxEvidenceCislo = 17;
         private int maxVinCislo = 4;
+        private int maxMeno = 35;
+        private int maxPriezvisko = 35;
 
-        public App()
+        public AppCore()
         {
             zariadenie = new Zariadenie();
         }
@@ -284,7 +286,7 @@ namespace DataStructureLogic
 
             if (errorHlasky == "")
             {
-                return zariadenie.ZmenaUdajovVodicky(evidencneCisloPreukazu, menoVodica, priezviskoVodica,ukonceniePlatnosti, zakazViestVozidlo, dopravnePriestupky)
+                return zariadenie.ZmenaUdajovVodicky(evidencneCisloPreukazu, menoVodica, priezviskoVodica, ukonceniePlatnosti, zakazViestVozidlo, dopravnePriestupky)
                     ? "Vodicky bol uspesne pridany. "
                     : "Pridanie vodickeho preukazu bolo neuspesne. ";
             }
