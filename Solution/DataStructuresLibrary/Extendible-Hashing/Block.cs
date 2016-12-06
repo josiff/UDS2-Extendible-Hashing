@@ -92,8 +92,11 @@ namespace DataStructuresLibrary.Extendible_Hashing
             foreach (var x in PoleRecordov)
             {
                 poradovneCisloZaznamu++;
-                sb.AppendLine("Record: " + poradovneCisloZaznamu + "\t"
-                              + x.ToString());
+                if (x != null)
+                {
+                    sb.AppendLine("Record: " + poradovneCisloZaznamu + "\t"
+                             + x.ToString());
+                }
             }
 
             return sb.ToString();
@@ -140,19 +143,12 @@ namespace DataStructuresLibrary.Extendible_Hashing
             int temp = BitConverter.GetBytes(AdresaPrvehoRecordu).Length;
             Array.Copy(BitConverter.GetBytes(AdresaPrvehoRecordu), 0, poleBytov, temp_index, temp);
             temp_index += temp;
-
+            var velkost = hasAddress ? PoleRecordov[0].GetAddressSize() : PoleRecordov[0].GetSize();
             foreach (var x in PoleRecordov)
             {
-                if (hasAddress)
-                {
-                    temp_index += x.GetAddressSize();
-                    Array.Copy(x.ToByteArray(true), 0, poleBytov, temp_index, x.GetAddressSize());
-                }
-                else
-                {
-                    temp_index +=  x.GetSize();
-                    Array.Copy(x.ToByteArray(false), 0, poleBytov, temp_index, x.GetSize());
-               }
+                var array = x.ToByteArray(true);
+                Array.Copy(array, 0, poleBytov, temp_index, velkost);
+                temp_index += velkost;
             }
             return poleBytov;
         }

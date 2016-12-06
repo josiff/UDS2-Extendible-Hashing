@@ -51,6 +51,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataStructureLogic\DataStructureLogic.csproj">
+      <Project>{09F4CA2B-7B2C-4473-B554-9B61BEC34EC3}</Project>
+      <Name>DataStructureLogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DataStructuresLibrary\DataStructuresLibrary.csproj">
       <Project>{BCBEEBC9-FB83-4FD1-A8D7-5B39E49C687B}</Project>
       <Name>DataStructuresLibrary</Name>

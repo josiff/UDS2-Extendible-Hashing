@@ -117,7 +117,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// </summary>
         /// <param name="adresaBloku"></param>
         /// <param name="poleBytov"></param>
-        private void ZapisBlok(int adresaBloku, byte[] poleBytov)
+        public void ZapisBlok(int adresaBloku, byte[] poleBytov)
         {
             //vypocitam kolko zabera prvy block
             int temp = adresaBloku * _prvyBlock.GetSize();
