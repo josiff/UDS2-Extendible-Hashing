@@ -94,10 +94,10 @@ namespace DataStructureLogic
                 return "Nebolo zadany spravny vstup pre: " + "Prevadzkova hmotnost";
             }
 
-            bool pridaj =   zariadenie.PridanieAuto(evidencneCisloVozidla, vinCislo, pocetNaprav, prevadzkovaHmotnost, vPatrani,
+           bool pridaj =   zariadenie.PridanieAuto(evidencneCisloVozidla, vinCislo, pocetNaprav, prevadzkovaHmotnost, vPatrani,
                 koniecPlatnostiStk, koniecPlatnostiEk);
-
-            return pridaj ? "Do zariadenia bolo uspesne pridane auto. " : "Pridanie auta bolo neuspesne.";
+            Auto auto = new Auto(evidencneCisloVozidla, vinCislo, pocetNaprav, prevadzkovaHmotnost, vPatrani, koniecPlatnostiStk, koniecPlatnostiEk);
+            return pridaj ? "Do zariadenia bolo uspesne pridane auto. " : "Pridanie auta bolo neuspesne." + auto.ToString();
         }
       
         /// Vyradenie 

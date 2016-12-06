@@ -10,16 +10,16 @@ namespace DataStructuresLibrary.Extendible_Hashing
     public abstract class Record 
     {
         public bool IsValid { get; set; }
-        public int _pocet_bitov_isvalid = 1;
+        public int _pocet_bytov_isvalid = 1;
         public string Key { get; set; }
-        public int _pocet_bitov_key = 4;
+        public int _pocet_bytov_key = 4;
         
         /// <summary>
         /// Adresa bloku s datami tohto recordu
         /// </summary>
         public int Address { get; set; }
 
-        public int _pocet_bitov_address = 4; 
+        public int _pocet_bytov_address = 4; 
         public int Size { get; set; }
 
         public abstract int GetHash();

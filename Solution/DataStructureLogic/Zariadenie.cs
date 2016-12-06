@@ -85,8 +85,7 @@ namespace DataStructureLogic
         }
         private bool PridanieAuto(Auto auto)
         {
-           
-            return false;
+           return false;
         }
 
         /// Vyradenie 

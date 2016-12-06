@@ -19,57 +19,50 @@ namespace DataStructureLogic
         public string EvidencneCisloVozidla { get; set; }
 
         public const int EvidencneCisloVozidlaMaxLength = 7;
-        private int _pocet_bitov_evc = 7;
+        private int _pocet_bytov_evc = 7;
 
         ///VIN číslo(unikátny reťazec s maximálnou dĺžkou 17 znakov)
         public string VinCislo { get; set; }
 
         public const int VinCisloMaxLength = 17;
-        private int _pocet_bitov_vin = 17;
+        private int _pocet_bytov_vin = 17;
 
         /// <summary>
         /// Počet náprav(celé číslo)
         /// </summary>
         public int PocetNaprav { get; set; }
 
-        private int _pocet_bitov_napravy = 4;
+        private int _pocet_bytov_napravy = 4;
 
         /// <summary>
         /// Prevádzková hmotnosť(celé číslo)
         /// </summary>
         public int PrevadzkovaHmotnost { get; set; }
 
-        private int _pocet_bitov_hmotnost = 4;
+        private int _pocet_bytov_hmotnost = 4;
 
         /// <summary>
         /// v pátraní(boolean hodnota)
         /// </summary>
         public bool VPatrani { get; set; }
 
-        private int _pocet_bitov_vpatrani = 1;
+        private int _pocet_bytov_vpatrani = 1;
 
         /// <summary>
         /// dátum konca platnosti STK
         /// </summary>
         public DateTime KoniecPlatnostiSTK { get; set; }
 
-        private int _pocet_bitov_datum_stk = 10;
+        private int _pocet_bytov_datum_stk = 10;
 
         /// <summary>
         /// dátum konca platnosti EK
         /// </summary>
         public DateTime KoniecPlatnostiEK { get; set; }
 
-        private int _pocet_bitov_datum_ek = 10;
+        private int _pocet_bytov_datum_ek = 10;
 
-        /// <summary>
-        /// Velkost dat v bytoch - auta
-        /// </summary>
-        public int Size { get; private set; }
-
-        public int AddressSize { get; set; }
-
-        public bool JePotrebnyPlnyVypis { get; set; }
+        public bool JePotrebnyPlnyVypis = true;
 
         #endregion
 
@@ -96,10 +89,8 @@ namespace DataStructureLogic
             VPatrani = vPatrani;
             KoniecPlatnostiSTK = koniecPlatnostiStk;
             KoniecPlatnostiEK = koniecPlatnostiEk;
-            Size = _pocet_bitov_vin + _pocet_bitov_datum_ek + _pocet_bitov_datum_stk +
-                   _pocet_bitov_evc + _pocet_bitov_hmotnost + _pocet_bitov_napravy + _pocet_bitov_vpatrani;
-            AddressSize = _pocet_bitov_address + _pocet_bitov_isvalid + _pocet_bitov_key;
-            AddressSize = -1;
+            
+            Address = -1;
         }
 
         /// <summary>
@@ -115,34 +106,30 @@ namespace DataStructureLogic
             VPatrani = auto.VPatrani;
             KoniecPlatnostiSTK = auto.KoniecPlatnostiSTK;
             KoniecPlatnostiEK = auto.KoniecPlatnostiEK;
-            Size = _pocet_bitov_vin + _pocet_bitov_datum_ek + _pocet_bitov_datum_stk +
-                   _pocet_bitov_evc + _pocet_bitov_hmotnost + _pocet_bitov_napravy + _pocet_bitov_vpatrani;
-            AddressSize = _pocet_bitov_address + _pocet_bitov_isvalid + _pocet_bitov_key;
+            Address = auto.Address;
+            Key = auto.Key;
+            IsValid = auto.IsValid;
+
+            
         }
 
         public Auto(string key)
         {
             Key = key;
             IsValid = true;
-            Size = _pocet_bitov_vin + _pocet_bitov_datum_ek + _pocet_bitov_datum_stk +
-                   _pocet_bitov_evc + _pocet_bitov_hmotnost + _pocet_bitov_napravy + _pocet_bitov_vpatrani;
-            AddressSize = _pocet_bitov_address + _pocet_bitov_isvalid + _pocet_bitov_key;
-        }
+           }
 
         public Auto()
         {
             IsValid = false;
-            Size = _pocet_bitov_vin + _pocet_bitov_datum_ek + _pocet_bitov_datum_stk +
-                 _pocet_bitov_evc + _pocet_bitov_hmotnost + _pocet_bitov_napravy + _pocet_bitov_vpatrani;
-            AddressSize = _pocet_bitov_address + _pocet_bitov_isvalid + _pocet_bitov_key;
-        }
+         }
 
-    #endregion
+        #endregion
 
 
         #region Override methods from Block
-
-          public override int GetHash()
+    
+        public override int GetHash()
           {
             int hashcode = 0;
             int i = 0;
@@ -157,10 +144,9 @@ namespace DataStructureLogic
                 //konvertujem char na int
                 j = Convert.ToInt32(c) / 6.0;
                 //vypocitam pomocou funkcie hash code. 
-               hashcode += Convert.ToInt32(Math.Round(Math.Pow(j, i / pom1)) * i * 1.6 * pom1 * pom2);
+                hashcode += Convert.ToInt32(Math.Round(Math.Pow(j, i / pom1)) * i * 1.6 * pom1 * pom2);
             }
-
-            return hashcode;
+            return  hashcode;
         }
 
         public override byte[] GetBitSet()
@@ -171,17 +157,36 @@ namespace DataStructureLogic
 
         public override int GetSize()
         {
-           return Size;
+          return Size = _pocet_bytov_vin + _pocet_bytov_datum_ek + _pocet_bytov_datum_stk +
+                   _pocet_bytov_evc + _pocet_bytov_hmotnost + _pocet_bytov_napravy + _pocet_bytov_vpatrani;
+           
         }
-
+        /// <summary>
+        /// Velkost dat v bytov - adresa a kluc. 
+        /// </summary>
         public override int GetAddressSize()
         {
-            return AddressSize;
+            return _pocet_bytov_address + _pocet_bytov_isvalid + _pocet_bytov_key;
+
         }
 
         public override string ToString()
         {
-            throw new NotImplementedException();
+            string s = "\nEVC: " + EvidencneCisloVozidla + "\tVIN cislo: " + VinCislo +
+                       "\tPocet naprav: " + PocetNaprav + "\nPrevadzkova hmotnost: " + PrevadzkovaHmotnost
+                       + "V patrani: " + ((VPatrani) ? "ANO" : "NIE")
+                       + "\tKoniec platnosti STK: " + KoniecPlatnostiSTK.ToShortDateString()
+                       + "\tKoniec platnosti EK: " + KoniecPlatnostiEK.ToShortDateString();
+            string s2 = "\nAdresa: " + Address + "\tHash code: " + Key + "\tSize: " + GetSize() + "\tAddress Size: " +
+                        GetAddressSize();
+            if (JePotrebnyPlnyVypis)
+            {
+                return s + s2;
+            }
+            else
+            {
+               return s2;
+            }
         }
 
         public override bool Equals(object obj)
@@ -223,38 +228,38 @@ namespace DataStructureLogic
             {
                 //je validny
                 poleBytov = new byte[GetSize()];
-                Array.Copy(BitConverter.GetBytes(IsValid), 0, poleBytov, temp_index, _pocet_bitov_isvalid);
-                temp_index += _pocet_bitov_isvalid;
+                Array.Copy(BitConverter.GetBytes(IsValid), 0, poleBytov, temp_index, _pocet_bytov_isvalid);
+                temp_index += _pocet_bytov_isvalid;
                 //adresa
-                Array.Copy(BitConverter.GetBytes(Address), 0, poleBytov, temp_index, _pocet_bitov_address);
-                temp_index += _pocet_bitov_address;
+                Array.Copy(BitConverter.GetBytes(Address), 0, poleBytov, temp_index, _pocet_bytov_address);
+                temp_index += _pocet_bytov_address;
 
                 if (IsValid)
                 {
                     //evidencne cislo
-                    Array.Copy(Encoding.UTF8.GetBytes(EvidencneCisloVozidla), 0, poleBytov, temp_index, _pocet_bitov_evc);
-                    temp_index += _pocet_bitov_evc;
+                    Array.Copy(Encoding.UTF8.GetBytes(EvidencneCisloVozidla), 0, poleBytov, temp_index, _pocet_bytov_evc);
+                    temp_index += _pocet_bytov_evc;
                     //vin cislo
-                    Array.Copy(Encoding.UTF8.GetBytes(VinCislo), 0, poleBytov, temp_index, _pocet_bitov_vin);
-                    temp_index += _pocet_bitov_vin;
+                    Array.Copy(Encoding.UTF8.GetBytes(VinCislo), 0, poleBytov, temp_index, _pocet_bytov_vin);
+                    temp_index += _pocet_bytov_vin;
                     //pocet naprav
-                    Array.Copy(BitConverter.GetBytes(PocetNaprav), 0, poleBytov, temp_index, _pocet_bitov_napravy);
-                    temp_index += _pocet_bitov_napravy;
+                    Array.Copy(BitConverter.GetBytes(PocetNaprav), 0, poleBytov, temp_index, _pocet_bytov_napravy);
+                    temp_index += _pocet_bytov_napravy;
                     //prevadzkova hmotnost
                     Array.Copy(BitConverter.GetBytes(PrevadzkovaHmotnost), 0, poleBytov, temp_index,
-                        _pocet_bitov_hmotnost);
-                    temp_index += _pocet_bitov_napravy;
+                        _pocet_bytov_hmotnost);
+                    temp_index += _pocet_bytov_napravy;
                     // je v patrani
-                    Array.Copy(BitConverter.GetBytes(VPatrani), 0, poleBytov, temp_index, _pocet_bitov_vpatrani);
-                    temp_index += _pocet_bitov_vpatrani;
+                    Array.Copy(BitConverter.GetBytes(VPatrani), 0, poleBytov, temp_index, _pocet_bytov_vpatrani);
+                    temp_index += _pocet_bytov_vpatrani;
                     //koniec platnosti stk
                     Array.Copy(Encoding.UTF8.GetBytes(KoniecPlatnostiSTK.ToString("dd.MM.yyyy")), 0, poleBytov,
-                        temp_index, _pocet_bitov_datum_stk);
-                    temp_index += _pocet_bitov_datum_stk;
+                        temp_index, _pocet_bytov_datum_stk);
+                    temp_index += _pocet_bytov_datum_stk;
                     //koniec platnosti ek
                     Array.Copy(Encoding.UTF8.GetBytes(KoniecPlatnostiEK.ToString("dd.MM.yyyy")), 0, poleBytov,
-                        temp_index, _pocet_bitov_datum_ek);
-                    // temp_index += _pocet_bitov_datum_ek;
+                        temp_index, _pocet_bytov_datum_ek);
+                    // temp_index += _pocet_bytov_datum_ek;
                     return poleBytov;
                 }
             }
@@ -263,11 +268,11 @@ namespace DataStructureLogic
             poleBytov = new byte[GetAddressSize()];
             temp_index = 0;
             //is valid
-            Array.Copy(BitConverter.GetBytes(IsValid), 0, poleBytov, temp_index, _pocet_bitov_isvalid);
-            temp_index += _pocet_bitov_isvalid;
+            Array.Copy(BitConverter.GetBytes(IsValid), 0, poleBytov, temp_index, _pocet_bytov_isvalid);
+            temp_index += _pocet_bytov_isvalid;
             //adresa
-            Array.Copy(BitConverter.GetBytes(Address), 0, poleBytov, temp_index, _pocet_bitov_address);
-            temp_index += _pocet_bitov_address;
+            Array.Copy(BitConverter.GetBytes(Address), 0, poleBytov, temp_index, _pocet_bytov_address);
+            temp_index += _pocet_bytov_address;
             if (IsValid)
             {
                 //zapisem hashovaci klud
@@ -281,45 +286,48 @@ namespace DataStructureLogic
             int temp_index = 0;
             //precitam prvu hodnotu na prvom bite - ci je validne alebo nie
             IsValid = BitConverter.ToBoolean(byteArray, 0);
-            temp_index += _pocet_bitov_isvalid;
+            temp_index += _pocet_bytov_isvalid;
             //ak ma adresu fa je validne
           //ak je validne tak priradim 
                 if (!hasAdress &&IsValid)
                 {
                     //adresa
                     Address = BitConverter.ToInt32(byteArray, temp_index);
-                    temp_index += _pocet_bitov_address;
+                    temp_index += _pocet_bytov_address;
                     //evidencne cislo 
-                    EvidencneCisloVozidla = Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bitov_evc).Trim('\0');
-                    temp_index += _pocet_bitov_evc;
+                    EvidencneCisloVozidla = Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bytov_evc).Trim('\0');
+                    temp_index += _pocet_bytov_evc;
                     //vin cislo
-                    VinCislo = Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bitov_vin).Trim('\0');
-                    temp_index += _pocet_bitov_vin;
+                    VinCislo = Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bytov_vin).Trim('\0');
+                    temp_index += _pocet_bytov_vin;
                     //pocet naprav
                     PocetNaprav = BitConverter.ToInt32(byteArray, temp_index);
-                    temp_index += _pocet_bitov_napravy;
+                    temp_index += _pocet_bytov_napravy;
                     //prevadzkova hmotnost
                     PrevadzkovaHmotnost = BitConverter.ToInt32(byteArray, temp_index);
-                    temp_index += _pocet_bitov_napravy;
+                    temp_index += _pocet_bytov_napravy;
                     // je v patrani
                     VPatrani = BitConverter.ToBoolean(byteArray, temp_index);
-                    temp_index += _pocet_bitov_vpatrani;
+                    temp_index += _pocet_bytov_vpatrani;
                     //koniec platnosti stk
                     KoniecPlatnostiSTK =
-                    DateTime.ParseExact(Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bitov_datum_stk), "dd.MM.yyyy", CultureInfo.InvariantCulture);
-                    temp_index += _pocet_bitov_datum_stk;
+                    DateTime.ParseExact(Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bytov_datum_stk), "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                    temp_index += _pocet_bytov_datum_stk;
                     //koniec platnosti ek
-                    // temp_index += _pocet_bitov_datum_ek;
+                    // temp_index += _pocet_bytov_datum_ek;
             }
             else if (hasAdress && IsValid)
             {
                 //adresa
                 Address = BitConverter.ToInt32(byteArray, temp_index);
-                temp_index += _pocet_bitov_address;
+                temp_index += _pocet_bytov_address;
                 //hash key
                 Key = Encoding.UTF8.GetString(byteArray, temp_index, Encoding.UTF8.GetBytes(Key).Length).Trim('0');
             }
         }
+
+
+       
 
         #endregion
     }

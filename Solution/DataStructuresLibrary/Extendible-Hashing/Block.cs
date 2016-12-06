@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,19 +35,26 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public byteArray ToByteArray(object data)
-        {
-            // return BitConverter.GetBytes(data);          
-            throw new NotImplementedException();
+     
+    public byte[] ToByteArray()
+    {
+        byte[] bytes = new byte[Size];
+        //todo
+        return bytes ;
+    }
 
+        /// <summary>
+        /// Metoda naplni danu class datami z array of bytov
+        /// </summary>
+        /// <param name="byteArray">pole bytov<param>
+        /// <param name="hasAdress"></param>
+        public void FromByteArray(byte[] byteArray, bool hasAdress = true)
+        {
+            //todo
         }
 
-        public object FromByteArray(byteArray byteArray)
-        {
-            throw new NotImplementedException();
-        }
 
-        public bool Equals(object obj)
+    public bool Equals(object obj)
         {
             return false;
         }
