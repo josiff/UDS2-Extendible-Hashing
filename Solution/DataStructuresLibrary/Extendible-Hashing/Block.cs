@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,56 +9,301 @@ using System.Threading.Tasks;
 
 namespace DataStructuresLibrary.Extendible_Hashing
 {
+    /// <summary>
+    /// Trieda Blok
+    /// </summary>
     public class Block
     {
+        #region Properties
         /// <summary>
-        /// Bloky dat
+        /// Pole zaznamov - Record
         /// </summary>
         public Record[] PoleRecordov { get; set; }
-
-        public int PocetZaznamov { get; set; }
-
-        public int PocetPlatnych { get; set; }
-
-        public Block DalsiVolny { get; set; }
         /// <summary>
-        /// Hlbka bloku
+        /// Hlbka bloku - znamena kolko bitov beriem z hash kluca
         /// </summary>
         public int Hlbka { get; set; }
-
-
-        public int Size { get; set; }
-
-        
-
         /// <summary>
-        /// Zo suboru co mi prislo, tak naplnim record. 
+        /// Pocet zaznamov, ktore obsahuje blok. 
         /// </summary>
-        /// <param name="data"></param>
+        public int PocetZaznamov { get; set; }
+        /// <summary>
+        /// Pocet Platnych zaznamov v bloku
+        /// </summary>
+        public int PocetPlatnych { get; set; }
+        /// <summary>
+        /// Smernik na Dalsi volny Blok. 
+        /// </summary>
+        public Block DalsiVolny { get; set; }
+        /// <summary>
+        /// Velkost bloku v bytoch. 
+        /// </summary>
+        #endregion
+
+        #region Konstruktor
+
+        public Block(int pocetZaznamov)
+        {
+            PocetZaznamov = pocetZaznamov;
+            PocetPlatnych = 0;
+            PoleRecordov = new Record[pocetZaznamov];
+        }
+
+        #endregion
+
+        #region Overriden methods
+     /*   public bool Equals(object obj)
+        {
+            return false;
+        }
+
+    */
+        /// <summary>
+        /// METODA vypise vsetky informacie o bloku
+        /// </summary>
         /// <returns></returns>
-     
-    public byte[] ToByteArray()
-    {
-        byte[] bytes = new byte[Size];
-        //todo
-        return bytes ;
-    }
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            //poradove cislo zaznamu
+            int poradovneCisloZaznamu = 0;
+            foreach (var x in PoleRecordov)
+            {
+                poradovneCisloZaznamu++;
+                sb.AppendLine("Record: " + poradovneCisloZaznamu + "\t"
+                              + x.ToString());
+            }
+
+            return sb.ToString();
+        }
+        #endregion
+
+        #region Metody - ToByteArray, FromByteArray
+        /// <summary>
+        /// Vrati velkost bloku v bytoch
+        /// Vypocitam ako - velkost jedneho zaznamu a ten vynasobim poctom zaznamov. 
+        /// </summary>
+        /// <returns></returns>
+        public int GetSize()
+        {
+            return PoleRecordov[0].GetSize()*PocetZaznamov;
+        } 
+        /// <summary>
+        /// Vrati velkost bloku v bytoch - adresy
+        /// Vypocitam ako - velkost jedneho zaznamu (iba adresa a blok) a ten vynasobim poctom zaznamov. 
+        /// </summary>
+        /// <returns></returns>
+        public int GetAddressSize()
+        {
+            return PoleRecordov[0].GetAddressSize()*PocetZaznamov;
+        }
+        
+    
+        /// <summary>
+        /// Metoda ktora mi skonvertuje blok dat do array bytov.
+        /// Data (pole bytov) budu pouzite na ulozenie daneho bloku do suboru.
+        /// </summary>
+        /// <param name="hasAddress">True - ak ma adresu a kluc - pouzi GetAddressSize, inak GetSize.</param>
+        /// <returns>>Blok skonvertovany do pole bytov</returns>
+        public byte[] ToByteArray(bool hasAddress = false)
+        {
+            //v tejto premenej bude blok skonvertovany na byty
+            byte[] poleBytov = new byte[hasAddress? GetAddressSize() : GetSize()];
+            //skonvertujem Kazdy prvok v poli zaznamov na byty a pridam ich do pola bytov. 
+            int i = 0;//pomocna premena na zistenie na ktorom indexe mam zapisat zaznam.
+            foreach (var x in PoleRecordov)
+            {
+                i++;
+                if (hasAddress)
+                {
+                    Array.Copy(x.ToByteArray(true), 0, poleBytov, i*x.GetAddressSize(), x.GetAddressSize());
+                }
+                else
+                {
+                    Array.Copy(x.ToByteArray(false), 0, poleBytov, i * x.GetSize(), x.GetSize());
+               }
+            }
+            return poleBytov;
+        }
 
         /// <summary>
-        /// Metoda naplni danu class datami z array of bytov
+        /// Metoda naplni tento blok datami z array of bytov
+        /// Zo suboru co mi prislo, tak naplnim record. 
         /// </summary>
         /// <param name="byteArray">pole bytov<param>
         /// <param name="hasAdress"></param>
         public void FromByteArray(byte[] byteArray, bool hasAdress = true)
         {
-            //todo
-        }
+            //pomocne pole bytov
+            byte[] temp = hasAdress
+                ? new byte[PoleRecordov[0].GetAddressSize()]
+                : new byte[PoleRecordov[0].GetSize()];
+            //premena na pomoc s indexom pri kopirovani arrayov bytov. 
+            int i = 0;
+            foreach (var x in PoleRecordov)
+            {
+                i++;
+                if (hasAdress)
+                {
+                    Array.Copy(byteArray, i*x.GetAddressSize(), temp, 0, x.GetAddressSize());
+                }
+                else
+                {
+                    Array.Copy(byteArray, i * x.GetSize(), temp, 0, x.GetSize());
+                }
+                //pridam novy record z pomocnych bytov
+                x.FromByteArray(temp,hasAdress);
+            }
+          }
+
+        #endregion
 
 
-    public bool Equals(object obj)
+        #region Metody - na pracu s polom zaznamov - pridaj, najdi, vymaz. 
+        /// <summary>
+        /// Metoda prida zaznam do bloku. 
+        /// </summary>
+        /// <param name="record">Zaznam ktory chcem pridat. </param>
+        /// <returns>Hodnotu adresy, kde bol pridany zaznam. </returns>
+        public int PridajRecord(Record record)
         {
-            return false;
+            for (int i = 0; i < PocetZaznamov; i++)
+            {
+                //ak record nie je validny, tak tam pridam dany record. 
+                if (!PoleRecordov[i].IsValid)
+                {
+                    PoleRecordov[i] = record;
+                    PocetPlatnych++;
+                    return i; 
+                }
+            }
+            //nebol pridany, pretoze uz tam nie su ziadne volne bloky. 
+            return -1;
         }
+        /// <summary>
+        /// Metoda najde dany record v bloku. 
+        /// Ak je validny a rovnaky, tak ho vrati. inak null object. 
+        /// </summary>
+        /// <param name="zaznam">Record, ktory hladam</param>
+        /// <returns>Record, ktory hladam. </returns>
+        public Record NajdiRecord(Record zaznam)
+        {
+            foreach (var x in PoleRecordov)
+            {
+                //ak je record validny 
+                //a je rovnaky s danym recordom,
+                //tak ho vratim, inak pokracujem dalej. 
+                if (x.IsValid && x.Equals(zaznam))
+                {
+                    return x;
+                }
+            }
+            //record sa nenasiel :( 
+            //vratim null object, resp. defaultny
+            return default(Record);
+        }
+        /// <summary>
+        /// Metoda vymaze zadany record z bloku. 
+        /// Prakticky iba zmeni to, ze ho oznaci za neplatny. 
+        /// </summary>
+        /// <param name="record">Record ktory chcem vymazat. </param>
+        public void VymazRecord(Record record)
+        {
+            foreach (var x in PoleRecordov)
+            {
+                if (x.Equals(record))
+                {
+                    x.IsValid = false;
+                    PocetPlatnych--;
+                    break;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Dalsie metody
+        /// <summary>
+        /// Metoda vycisti blok. 
+        /// Oznaci vsetky zaznamy ako nevalidne. 
+        /// </summary>
+        public void VycistiBlok()
+        {
+            foreach (var x in PoleRecordov)
+            {
+                x.IsValid = false;
+                PocetPlatnych--;
+            }
+        }
+        /// <summary>
+        /// Metoda zisti ci je blok plny. 
+        /// </summary>
+        /// <returns>Hodnota vyjadrujuca ci je blok plny alebo nie. </returns>
+        public bool JePlny()
+        {
+            //vypocitam ho ako rozdiel medzi poctom zaznamou a poctom platnych, ak su tieto dva cisla rovnake, 
+            //tak to znamena, ze blok je plny. 
+            return (PocetZaznamov == PocetPlatnych);
+        }
+
+        public bool JePlnyCezCyklus()
+        {
+            foreach (var x in PoleRecordov)
+            {
+                if (!x.IsValid)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        /// <summary>
+        /// Metoda zisti ci je nejake volne miesto pre nejaky zaznam v bloku. 
+        /// </summary>
+        /// <returns></returns>
+        public int VolneMiesto()
+        {
+            //zistim ho odpocitanim poctom zaznamov od poctom platnych
+            return PocetZaznamov - PocetPlatnych;
+        }
+
+        public int VolneMiestoCezCyklus()
+        {
+            int pocetVolnych = 0;
+            foreach (var x in PoleRecordov)
+            {
+                if (!x.IsValid)
+                {
+                    pocetVolnych++;
+                }
+            }
+            return pocetVolnych;
+        }
+        /// <summary>
+        /// Metoda zisti ci blok je prazdny. 
+        /// </summary>
+        /// <returns></returns>
+        public bool JePrazdny()
+        {
+            return PocetPlatnych == 0;
+        }
+
+        public bool JePrazdnyCezCyklus()
+        {
+            foreach (var x in PoleRecordov)
+            {
+                if (x.IsValid)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        #endregion
+
+
 
 
     }

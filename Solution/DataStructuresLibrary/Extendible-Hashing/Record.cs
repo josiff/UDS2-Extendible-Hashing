@@ -61,7 +61,6 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <summary>
         /// Abstraktna metoda, ktora spracuje/skonvertuje dany zaznam a vrati ho ako pole bytov. 
         /// </summary>
-        /// <param name="allData"></param>
         /// <returns>Pole bytov - zaznam konvertovany do bytov.</returns>
         public abstract byte[] ToByteArray(bool allData = true);
         /// <summary>
