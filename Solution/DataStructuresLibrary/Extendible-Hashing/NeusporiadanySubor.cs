@@ -16,7 +16,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <summary>
         /// Adresa prveho prazdneho bloku. 
         /// </summary>
-        public int PrazdnyBlok { get;  set; }
+        public int PrazdnyBlok { get; set; }
         /// <summary>
         /// Adresa prveho volneho bloku s volnym miestom. 
         /// Blok ktory nie je plny. 
@@ -36,6 +36,8 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         /// <summary>
         /// Pomocny block. Temporarny. 
+        /// Je to lubovolny blok, pouzivam ho takmer vo vsetkych metodach 
+        /// alebo 
         /// Je to prvy blok v subore - obsahuje nasledovne informacie:
         /// Prazdny blok - adresa
         /// Volny blok   - adresa
@@ -45,6 +47,8 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         /// <summary>
         /// Pomocny blok temporarny. 
+        /// pouzite - pri citani bloku 
+        /// pri mazani bloku 
         /// </summary>
         private Block _tempBlock;
         /// <summary>
@@ -54,32 +58,59 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         #endregion
 
-        #region Konstruktor
-
+        #region Konstruktor a toString
+        /// <summary>
+        /// Konstruktor neusporiadaneho suboru
+        /// Blok 
+        /// nazov suboru
+        /// </summary>
+        /// <param name="blok"></param>
+        /// <param name="nazovSuboru"></param>
         public NeusporiadanySubor(Block blok, string nazovSuboru)
         {
             _prvyBlock = blok;
             //zistim ci subor nahodou neexistuje
             if (File.Exists(nazovSuboru))
-                using (_fileStream = new FileStream(nazovSuboru, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-                {
-                    PrecitajPrvyBlok();
-                }
+            {
+                _fileStream = new FileStream(nazovSuboru, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                PrecitajPrvyBlok();
+            }
             else
-                using (_fileStream = new FileStream(nazovSuboru, FileMode.Create, FileAccess.ReadWrite))
-                {
-                    //nastavim defaultne hodnoty
-                    PrazdnyBlok = -1;
-                    VolnyBlok = -1;
-                    PocetBlokov = 0;
-                    //Zapisem blok do suboru
-                    ZapisPrvyBlok();
-                }
+
+            {
+                _fileStream = new FileStream(nazovSuboru, FileMode.Create, FileAccess.ReadWrite);
+                //nastavim defaultne hodnoty
+                PrazdnyBlok = -1;
+                VolnyBlok = -1;
+                PocetBlokov = 0;
+                //Zapisem blok do suboru
+                ZapisPrvyBlok();
+            }
+        }
+        /// <summary>
+        /// Metoda zobrazi informacie neutriedeneho suboru. 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Prvy blok:");
+            sb.AppendLine("Prazdny blok: " + PrazdnyBlok
+                         + "\tVolny blok: " + VolnyBlok
+                         + "\tPocet blokov: " + PocetBlokov);
+            //vypisem jednotlive bloky
+            //prechadzam vsetky bloky a postupne ich citam zo suboru. 
+            for (int i = 0; i < PocetBlokov; i++)
+            {
+                _prvyBlock = PrecitajBlok(i);
+                sb.AppendLine("Blok " + i + "\t" + _prvyBlock);
+            }
+            return sb.ToString();
         }
 
         #endregion
 
-        
+
         #region Metody - nacitanie, zapisanie - Blocku
         /// <summary>
         /// Metoda zapise blok do suboru. 
@@ -89,7 +120,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         private void ZapisBlok(int adresaBloku, byte[] poleBytov)
         {
             //vypocitam kolko zabera prvy block
-            int temp = adresaBloku*_prvyBlock.GetSize();
+            int temp = adresaBloku * _prvyBlock.GetSize();
 
             //seeknem na dany index
             //a odtial zacnem potom zapisovat. 
@@ -108,16 +139,16 @@ namespace DataStructuresLibrary.Extendible_Hashing
             int temp_index = 0;
             //prazdny blok 
             int temp = BitConverter.GetBytes(PrazdnyBlok).Length;
-            Array.Copy(BitConverter.GetBytes(PrazdnyBlok), 0, poleBytov, temp_index, temp );
+            Array.Copy(BitConverter.GetBytes(PrazdnyBlok), 0, poleBytov, temp_index, temp);
             temp_index += temp;
             //volny blok 
-             temp = BitConverter.GetBytes(VolnyBlok).Length;
+            temp = BitConverter.GetBytes(VolnyBlok).Length;
             Array.Copy(BitConverter.GetBytes(VolnyBlok), 0, poleBytov, temp_index, temp);
             temp_index += temp;
             //pocet blokov. 
             temp = BitConverter.GetBytes(PocetBlokov).Length;
             Array.Copy(BitConverter.GetBytes(PocetBlokov), 0, poleBytov, temp_index, temp);
-          //Seeknem na zaciatok
+            //Seeknem na zaciatok
             _fileStream.Seek(0, SeekOrigin.Begin);
             //zapisem dany blok na nulty index. 
             ZapisBlok(0, poleBytov);
@@ -134,7 +165,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //precimam vsetke byty
             _fileStream.Read(poleBytov, 0, temp);
             //nastavim atributy podla toho co som precitala a indexu
-            temp = 0; 
+            temp = 0;
             //prazdny blok
             PrazdnyBlok = BitConverter.ToInt32(poleBytov, temp);
             temp = BitConverter.GetBytes(PrazdnyBlok).Length;
@@ -142,22 +173,22 @@ namespace DataStructuresLibrary.Extendible_Hashing
             VolnyBlok = BitConverter.ToInt32(poleBytov, temp);
             temp += BitConverter.GetBytes(VolnyBlok).Length;
             //pocet blokov
-            PocetBlokov = BitConverter.ToInt32(poleBytov, temp);temp = 0; 
-         }
+            PocetBlokov = BitConverter.ToInt32(poleBytov, temp); temp = 0;
+        }
 
         public Block PrecitajBlok(int adresaBloku)
         {
             //copy konstruktorom vytvorim novy block
             _tempBlock = new Block(_prvyBlock);
             //vytvorim pole bytov, ktore idem citat
-            byte [] poleBytov = new byte[_tempBlock.GetSize()];
+            byte[] poleBytov = new byte[_tempBlock.GetSize()];
             //vycistim blok - nastavim dane recordy na nevalidne
             _tempBlock.VycistiBlok();
             //nastavim pomocnu premenu na velkost poctu bytov v bloku
             //je to index od ktoreho budem seekovat.
             int temp = _tempBlock.GetSize();
             //seeknem na dany index
-            _fileStream.Seek(adresaBloku*temp, SeekOrigin.Begin);
+            _fileStream.Seek(adresaBloku * temp, SeekOrigin.Begin);
             //precitam dane byty zo suboru
             _fileStream.Read(poleBytov, 0, temp);
             //nastavim blok z danych dat. 
@@ -166,11 +197,273 @@ namespace DataStructuresLibrary.Extendible_Hashing
             return _tempBlock;
         }
 
+        public void VymazBlok()
+        {
+            _fileStream.SetLength(_fileStream.Length - _prvyBlock.GetSize());
+            PocetBlokov--;
+        }
+
         #endregion
 
-        #region MyRegion
+        #region Zapis a Nacitanie Recordu (zaznamu)
+        /// <summary>
+        /// Metoda precita zaznam zo suboru na zadanej adrese v bloku. 
+        /// </summary>
+        /// <param name="adresaBloku"></param>
+        /// <param name="record"></param>
+        /// <param name="editovanie"></param>
+        /// <returns></returns>
+        public Record PrecitajZaznam(int adresaBloku, Record record, bool editovanie)
+        {
+            _prvyBlock = PrecitajBlok(adresaBloku);
+            if (editovanie)
+            {
+                AddressEditedBlock = adresaBloku;
+            }
+            return _prvyBlock.NajdiRecord(record);
+        }
 
-        
+        /// <summary>
+        /// Metoda zapise dany zaznam resp. record do suboru, resp. aj bloku.
+        /// </summary>
+        /// <param name="record">Record, ktory chcem zapisat do suboru. </param>
+        /// <returns>Adresa na ktoru zapisalo do suboru. </returns>
+        public int ZapisZaznam(Record record)
+        {
+            //vycistim prvy blok.aby som do neho mohla potom nacitat blok.  
+            _prvyBlock.VycistiBlok();
+            //nastavim adresu bolu na najblizsiu volnu adresu. 
+            int adresaBloku = VolnyBlok;
+            //ak je adresa plna, tak zapisem do najblizsieho volneho bloku. 
+            if (adresaBloku < 0)
+            {
+                adresaBloku = PrazdnyBlok;
+                //ak je adresa bloku - nenastavena
+                //zapisem novy blok do suboru
+                if (adresaBloku < 0)
+                {
+                    //nastavim sa na dany index od ktoreho idem citat 
+                    //resp. na koniec
+                    _fileStream.Seek(0, SeekOrigin.End);
+                    //zvacsim adresu bolou o jedna
+                    adresaBloku = PocetBlokov + 1;
+                    //pridam zaznam do bloku
+                    _prvyBlock.PridajRecord(record);
+                    //ak je pocet zaznamov v bloku vacsi ako jeden, 
+                    //tak to pridam do volneho bloku. 
+                    if (_prvyBlock.PocetPlatnych > 1)
+                    {
+                        _pridajDoVolnehoBloku(adresaBloku);
+                    }
+                    //zapis blok do suboru
+                    _fileStream.WriteAsync(_prvyBlock.ToByteArray(), 0, _prvyBlock.GetSize());
+                    //zvysim pocet blokov
+                    PocetBlokov++;
+                    //vratim adresu bloku, na ktoru som to zapisala
+                    return adresaBloku;
+                }
+                // ak je adresa bloku definovana
+                //precitam blok na danej adrese
+                _prvyBlock = PrecitajBlok(adresaBloku);
+                //pridam zaznam do bloku
+                _prvyBlock.PridajRecord(record);
+                //vymazem blok z prazdneho 
+                _vymazBlokZPrazdnychBlokov(adresaBloku);
+                //zistim ci prvy blok obsahuje nejaky rekord
+                if (_prvyBlock.PocetPlatnych > 1)
+                {
+                    //tak to pridam do volneho bloku. 
+                    _pridajDoVolnehoBloku(adresaBloku);
+                }
+
+            }
+            //ak mam platnu adresu bloku
+            //ak adresa ukazuje na nejaky existujuci blok. 
+            else
+            {
+                //precitam blok z danej adresy
+                _prvyBlock = PrecitajBlok(adresaBloku);
+                //pridam zaznam do bloku 
+                _prvyBlock.PridajRecord(record);
+                //ak je blok plny 
+                if (_prvyBlock.JePlny())
+                {
+                    //ak je pocet platnych platny
+                    //resp. budem mat z coho vymazat
+                    if (_prvyBlock.PocetPlatnych > 1)
+                    {
+                        _vymazBlokZVolnychBlokov(adresaBloku);
+                    }
+                }
+            }
+            ZapisBlok(adresaBloku, _prvyBlock.ToByteArray());
+            //vrat adresu bloku do ktoreho sa to zapisalo
+            return adresaBloku;
+        }
+
+        public void UpravZaznam(Record staryRecord, Record novyRecord)
+        {
+            //vymazem stary record
+            _prvyBlock.VymazRecord(staryRecord);
+            //pridam novy record
+            _prvyBlock.PridajRecord(novyRecord);
+            //zapisem do suboru
+            ZapisBlok(AddressEditedBlock, _prvyBlock.ToByteArray());
+        }
+
+        public Record VymazZaznam(int adresaBloku, Record record)
+        {
+            record = PrecitajZaznam(adresaBloku, record, false);
+            //zistim ci je prvy blok plny
+            bool plny = _prvyBlock.JePlny();
+            //nastavim record na neplatny
+            record.IsValid = false;
+            //ak je prazdny
+            if (_prvyBlock.JePrazdny())
+            {
+                //ak je adresa bloku rovnaka ako pocet blokov
+                if (adresaBloku == PocetBlokov)
+                {
+                    //Vymaz blok
+                    VymazBlok();
+                    //ak bosahuej nejake platne data
+                    //tak to vymazem z bloku s volnymi blokmi. 
+                    if (_prvyBlock.PocetPlatnych > 1)
+                    {
+                        _vymazBlokZVolnychBlokov(adresaBloku);
+                    }
+                    adresaBloku--;
+                    //precitam blok z nasledujucej adresy a ak je tam nejaky
+                    //volny blok tak ho vymazem 
+                    while (adresaBloku != 0)
+                    {
+                        _prvyBlock = PrecitajBlok(adresaBloku);
+                        //ak je blok prazdny - tak ho vymazem 
+                        if (_prvyBlock.JePrazdny())
+                        {
+                            VymazBlok();
+                            _vymazBlokZPrazdnychBlokov(adresaBloku);
+                            adresaBloku--;
+                        }
+                        else
+                        {
+                            //ak nie je prazdny,tak vrat dany record, data sa uz vymazali, 
+                            //a ako aj prazdne bloky, tak je cas sa vratit a skoncit. 
+                            return record;
+                        }
+                    }
+
+                }
+                else
+                {
+                    //vymaz z volnych blokov
+                    if (_prvyBlock.PocetPlatnych > 1)
+                    {
+                        _vymazBlokZVolnychBlokov(adresaBloku);
+                    }
+                    //pridaj do prazdneho bloku
+                    _pridajDoPrazdneho(adresaBloku);
+                }
+
+            }
+            else if (plny)
+            {
+                //pripadne ak je plny, tak ho pridam do volnych blokov 
+                if (_prvyBlock.PocetPlatnych > 1)
+                {
+                    _pridajDoVolnehoBloku(adresaBloku);
+                }
+                ZapisBlok(adresaBloku, _prvyBlock.ToByteArray());
+            }
+            else
+            {
+                //inak 
+                //zapis do bloku 
+                ZapisBlok(adresaBloku, _prvyBlock.ToByteArray());
+            }
+            return record;
+        }
+
+        #endregion
+
+        #region Pomocne metody pre Zapis, citanie Zaznamov
+        /// <summary>
+        /// Privatna metoda, ktora sa pouziva iba v danej triede. 
+        /// Metoda prida do temporarnej prementej _prvyBlock adresu
+        /// a nastavy volny blok suboru na danu adresu. 
+        /// </summary>
+        /// <param name="adresaBloku"></param>
+        private void _pridajDoVolnehoBloku(int adresaBloku)
+        {
+            _prvyBlock.AdresaPrvehoRecordu = adresaBloku;
+            VolnyBlok = adresaBloku;
+        }
+
+        private void _pridajDoPrazdneho(int adresaBloku)
+        {
+            //adresu prveho bloku nastavim na prazdny blok 
+            _prvyBlock.AdresaPrvehoRecordu = PrazdnyBlok;
+            //zapisem blok s danou adresou
+            ZapisBlok(adresaBloku, _prvyBlock.ToByteArray());
+            //ak je nastavena adresa volneho bloku, tak tam zapisem prazdny blok. 
+            if (VolnyBlok != -1)
+            {
+                _prvyBlock = PrecitajBlok(PrazdnyBlok);
+                ZapisBlok(PrazdnyBlok, _prvyBlock.ToByteArray());
+            }
+            VolnyBlok = adresaBloku;
+        }
+
+
+        private void _vymazBlokZPrazdnychBlokov(int adresaMazaneho)
+        {
+            int adrsesaPrvehoRecordu = _tempBlock.AdresaPrvehoRecordu;
+            //ak mazane sa rovna praznemu bloku 
+            if (adresaMazaneho == PrazdnyBlok)
+            {
+                PrazdnyBlok = adrsesaPrvehoRecordu;
+                _prvyBlock.AdresaPrvehoRecordu = -1;
+            }
+            //ak adresa je rozna -1, resp. musi byt nastavena
+            if (adrsesaPrvehoRecordu != -1)
+            {
+                //precitam prazdny blok 
+                PrecitajBlok(adrsesaPrvehoRecordu);
+                //zapisem druhu premenu blok do suboru
+                ZapisBlok(adrsesaPrvehoRecordu, _tempBlock.ToByteArray());
+            }
+        }
+
+        private void _vymazBlokZVolnychBlokov(int adresaMazaneho)
+        {
+            int rodic = VolnyBlok;
+            //adresa prveho bloku - temporarneho
+            int vymazPotomka = _prvyBlock.AdresaPrvehoRecordu;
+            if (VolnyBlok == adresaMazaneho)
+            {
+                //nastavim adresu prveho pomocneho bloku na -1
+                _prvyBlock.AdresaPrvehoRecordu = -1;
+                //nastavim adresu volneho bloku na danu adresu
+                VolnyBlok = vymazPotomka;
+                //vratim sa spat
+                return;
+            }
+            //ak nie je to volny blok, tak hladam z danych blokov
+            while (rodic != -1)
+            {
+                //precitam blok z druheho temp bloku
+                _tempBlock = PrecitajBlok(rodic);
+
+                if (_tempBlock.AdresaPrvehoRecordu == adresaMazaneho)
+                {
+                    ZapisBlok(rodic, _tempBlock.ToByteArray());
+                    return;
+                }
+                //prechadzam dovtedy, potkym sa nenastavi rodic na nejaku inu hodnotu ako -1
+                rodic = _tempBlock.AdresaPrvehoRecordu;
+
+            }
+        }
 
 
         #endregion
