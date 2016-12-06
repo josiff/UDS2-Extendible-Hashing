@@ -46,13 +46,28 @@ namespace DataStructuresLibrary.Extendible_Hashing
         #endregion
 
         #region Konstruktor
-
-        public Block(int pocetZaznamov)
+        ///<summary>
+        /// Konstruktor, ktory vytvori prazdny blok. 
+        /// </summary>
+        public Block(int pocetZaznamov, int hlbka)
         {
             PocetZaznamov = pocetZaznamov;
             PocetPlatnych = 0;
             PoleRecordov = new Record[pocetZaznamov];
             AdresaPrvehoRecordu = -1;
+        }
+        /// <summary>
+        /// Copy konstruktor Bloku
+        /// </summary>
+        /// <param name="block"></param>
+        public Block(Block block)
+        {
+            AdresaPrvehoRecordu = block.AdresaPrvehoRecordu;
+            DalsiVolny = block.DalsiVolny;
+            Hlbka = block.Hlbka;
+            PocetPlatnych = block.PocetPlatnych;
+            PocetZaznamov = block.PocetZaznamov;
+            PoleRecordov = block.PoleRecordov;
         }
 
         #endregion
