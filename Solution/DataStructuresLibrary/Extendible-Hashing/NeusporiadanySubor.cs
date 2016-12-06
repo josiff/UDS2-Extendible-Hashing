@@ -120,8 +120,15 @@ namespace DataStructuresLibrary.Extendible_Hashing
         public void ZapisBlok(int adresaBloku, byte[] poleBytov)
         {
             //vypocitam kolko zabera prvy block
-            int temp = adresaBloku * _prvyBlock.GetSize();
-
+            int temp;
+            if (_prvyBlock.PoleRecordov[0] == null)
+            {
+                temp = 12;
+            }
+            else
+            {
+               temp = adresaBloku * _prvyBlock.GetSize();
+            }
             //seeknem na dany index
             //a odtial zacnem potom zapisovat. 
             _fileStream.Seek(temp, SeekOrigin.Begin);
@@ -135,7 +142,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// </summary>
         private void ZapisPrvyBlok()
         {
-            var poleBytov = new byte[_prvyBlock.GetSize()];
+            var poleBytov = new byte[_prvyBlock.GetSize()+ 12];
             int temp_index = 0;
             //prazdny blok 
             int temp = BitConverter.GetBytes(PrazdnyBlok).Length;
@@ -187,6 +194,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //nastavim pomocnu premenu na velkost poctu bytov v bloku
             //je to index od ktoreho budem seekovat.
             int temp = _tempBlock.GetSize();
+            if (adresaBloku < 0) adresaBloku = 0;
             //seeknem na dany index
             _fileStream.Seek(adresaBloku * temp, SeekOrigin.Begin);
             //precitam dane byty zo suboru

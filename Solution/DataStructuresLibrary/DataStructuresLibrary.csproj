@@ -47,6 +47,12 @@
     <Compile Include="Extendible-Hashing\Record.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DateStructureGeneral\DateStructureGeneral.csproj">
+      <Project>{020BB410-5C35-4D20-849C-F71B4A6C20AB}</Project>
+      <Name>DateStructureGeneral</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

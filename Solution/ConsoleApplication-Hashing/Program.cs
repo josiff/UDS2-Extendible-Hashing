@@ -14,19 +14,34 @@ namespace ConsoleApplication_Hashing
         static void Main(string[] args)
         {
             ExtendibleHashing ex = new ExtendibleHashing();
-            Block blok = new Block(40, 1);
-            Console.WriteLine(blok.ToString());
-            Auto auto = new Auto("dkljkdsjl", "dkjsalkfjsdlkj", 4, 544, false, DateTime.Today.AddDays(433),
+          
+            
+            Auto auto = new Auto("1234567", "1234567", 4, 544, false, DateTime.Today.AddDays(433),
                 DateTime.Today.AddDays(99));
-            blok.PridajRecord(auto);
+            Auto auto2 = new Auto("1234567", "1234567", 4, 544, false, DateTime.Today.AddDays(433),
+                DateTime.Today.AddDays(99));
+            Console.WriteLine(auto.ToString());
+            Block blok = new Block(40, 1 );
             Console.WriteLine(blok.ToString());
-            NeusporiadanySubor ns = new NeusporiadanySubor(blok, "auta.txt");
-            ns.ZapisBlok(blok.AdresaPrvehoRecordu, blok.ToByteArray());
+
+            blok.PridajRecord(auto);
+            blok.PridajRecord(auto2);
+            Console.WriteLine(blok.ToString());
+         
+            
+            Block bloktemp = new Block(60, 2);
+            NeusporiadanySubor ns = new NeusporiadanySubor(bloktemp, "auta.txt");
+            ns.ZapisBlok(1, blok.ToByteArray());
             Console.WriteLine(ns.ToString());
             ns.ZapisZaznam((Record)auto);
             Console.WriteLine(ns.ToString());
-            Record r = blok.NajdiRecord((Record) auto);
-            Console.WriteLine(r.ToString());
+            ns.ZapisZaznam((Record)auto2);
+            Console.WriteLine("subor");
+            Console.WriteLine(ns.ToString());
+            Record r = blok.NajdiRecord((Record)auto);
+          r =   ns.PrecitajZaznam(1, auto2, false);
+
+            Console.WriteLine(r?.ToString());
 
             Block bl = ns.PrecitajBlok(blok.AdresaPrvehoRecordu);
             Console.WriteLine(bl.ToString());

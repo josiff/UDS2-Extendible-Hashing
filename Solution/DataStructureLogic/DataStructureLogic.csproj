@@ -53,6 +53,10 @@
       <Project>{BCBEEBC9-FB83-4FD1-A8D7-5B39E49C687B}</Project>
       <Name>DataStructuresLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DateStructureGeneral\DateStructureGeneral.csproj">
+      <Project>{020BB410-5C35-4D20-849C-F71B4A6C20AB}</Project>
+      <Name>DateStructureGeneral</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

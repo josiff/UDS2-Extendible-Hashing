@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using DataStructuresLibrary.Extendible_Hashing;
+using DateStructureGeneral;
 
 namespace DataStructureLogic
 {
@@ -89,7 +91,7 @@ namespace DataStructureLogic
             VPatrani = vPatrani;
             KoniecPlatnostiSTK = koniecPlatnostiStk;
             KoniecPlatnostiEK = koniecPlatnostiEk;
-            
+            IsValid = true;
             Address = -1;
         }
 
@@ -153,7 +155,7 @@ namespace DataStructureLogic
         public override int GetSize()
         {
           return _pocet_bytov_vin + _pocet_bytov_datum_ek + _pocet_bytov_datum_stk +
-                   _pocet_bytov_evc + _pocet_bytov_hmotnost + _pocet_bytov_napravy + _pocet_bytov_vpatrani;
+                   _pocet_bytov_evc + _pocet_bytov_hmotnost + _pocet_bytov_napravy + _pocet_bytov_vpatrani + _pocet_bytov_address + _pocet_bytov_isvalid;
            
         }
         /// <summary>
@@ -228,14 +230,14 @@ namespace DataStructureLogic
                 //adresa
                 Array.Copy(BitConverter.GetBytes(Address), 0, poleBytov, temp_index, _pocet_bytov_address);
                 temp_index += _pocet_bytov_address;
-
+               
                 if (IsValid)
                 {
                     //evidencne cislo
-                    Array.Copy(Encoding.UTF8.GetBytes(EvidencneCisloVozidla), 0, poleBytov, temp_index, _pocet_bytov_evc);
+                    Array.Copy(Helper_Bytes._get_pom_pole(_pocet_bytov_evc,Encoding.UTF8.GetBytes(EvidencneCisloVozidla) ), 0, poleBytov, temp_index, _pocet_bytov_evc);
                     temp_index += _pocet_bytov_evc;
                     //vin cislo
-                    Array.Copy(Encoding.UTF8.GetBytes(VinCislo), 0, poleBytov, temp_index, _pocet_bytov_vin);
+                    Array.Copy(Helper_Bytes._get_pom_pole(_pocet_bytov_vin, Encoding.UTF8.GetBytes(VinCislo)), 0, poleBytov, temp_index, _pocet_bytov_vin);
                     temp_index += _pocet_bytov_vin;
                     //pocet naprav
                     Array.Copy(BitConverter.GetBytes(PocetNaprav), 0, poleBytov, temp_index, _pocet_bytov_napravy);
