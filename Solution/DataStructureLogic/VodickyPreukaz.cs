@@ -105,14 +105,10 @@ namespace DataStructureLogic
             return hashcode;
         }
 
-        public override byte[] GetBitSet()
-        {
-            throw new NotImplementedException();
-        }
-
+  
         public override int GetSize()
         {
-            return Size = _pocet_bytov_cislo_preukazu + _pocet_bytov_dopravne_prieskumnik + _pocet_bytov_meno_vodica
+            return _pocet_bytov_cislo_preukazu + _pocet_bytov_dopravne_prieskumnik + _pocet_bytov_meno_vodica
                           + _pocet_bytov_priezvisko + _pocet_bytov_ukoncenie_platnosti +
                           _pocet_bytov_zakaz_viest_vozidlo
                           + _pocet_bytov_address + _pocet_bytov_isvalid;

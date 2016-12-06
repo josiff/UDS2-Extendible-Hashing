@@ -42,12 +42,6 @@ namespace ConsoleApplication_Hashing
             throw new NotImplementedException();
         }
 
-        public override byte[] GetBitSet()
-        {
-            throw new NotImplementedException();
-        }
-
-
         public override int GetSize()
         {
             throw new NotImplementedException();

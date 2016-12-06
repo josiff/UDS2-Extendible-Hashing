@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStructuresLibrary", "Da
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStructureLogic", "DataStructureLogic\DataStructureLogic.csproj", "{09F4CA2B-7B2C-4473-B554-9B61BEC34EC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLogic", "TestLogic\TestLogic.csproj", "{43F1647B-E973-45D1-AA45-0F1B568B6A70}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStructureTest", "ConsoleApplication-Hashing\DataStructureTest.csproj", "{1D230F59-7976-48D4-A713-657629608BCE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DateStructureGeneral", "DateStructureGeneral\DateStructureGeneral.csproj", "{020BB410-5C35-4D20-849C-F71B4A6C20AB}"
@@ -35,10 +33,6 @@ Global
 		{09F4CA2B-7B2C-4473-B554-9B61BEC34EC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09F4CA2B-7B2C-4473-B554-9B61BEC34EC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09F4CA2B-7B2C-4473-B554-9B61BEC34EC3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43F1647B-E973-45D1-AA45-0F1B568B6A70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43F1647B-E973-45D1-AA45-0F1B568B6A70}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43F1647B-E973-45D1-AA45-0F1B568B6A70}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43F1647B-E973-45D1-AA45-0F1B568B6A70}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1D230F59-7976-48D4-A713-657629608BCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1D230F59-7976-48D4-A713-657629608BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D230F59-7976-48D4-A713-657629608BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
