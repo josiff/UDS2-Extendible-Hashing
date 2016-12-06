@@ -16,6 +16,11 @@ namespace DataStructuresLibrary.Extendible_Hashing
     {
         #region Properties
         /// <summary>
+        /// Adresa prveho zaznamu v bloku. 
+        /// </summary>
+        public int AdresaPrvehoRecordu { get; set; }
+
+        /// <summary>
         /// Pole zaznamov - Record
         /// </summary>
         public Record[] PoleRecordov { get; set; }
@@ -47,6 +52,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
             PocetZaznamov = pocetZaznamov;
             PocetPlatnych = 0;
             PoleRecordov = new Record[pocetZaznamov];
+            AdresaPrvehoRecordu = -1;
         }
 
         #endregion
@@ -87,7 +93,8 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <returns></returns>
         public int GetSize()
         {
-            return PoleRecordov[0].GetSize()*PocetZaznamov;
+            return  BitConverter.GetBytes(AdresaPrvehoRecordu).Length +
+          +PoleRecordov[0].GetSize()*PocetZaznamov;
         } 
         /// <summary>
         /// Vrati velkost bloku v bytoch - adresy
@@ -96,7 +103,8 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <returns></returns>
         public int GetAddressSize()
         {
-            return PoleRecordov[0].GetAddressSize()*PocetZaznamov;
+            return  BitConverter.GetBytes(AdresaPrvehoRecordu).Length + 
+           + PoleRecordov[0].GetAddressSize()*PocetZaznamov;
         }
         
     
@@ -111,17 +119,24 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //v tejto premenej bude blok skonvertovany na byty
             byte[] poleBytov = new byte[hasAddress? GetAddressSize() : GetSize()];
             //skonvertujem Kazdy prvok v poli zaznamov na byty a pridam ich do pola bytov. 
-            int i = 0;//pomocna premena na zistenie na ktorom indexe mam zapisat zaznam.
+          
+            int temp_index = 0;//pomocna premena na zistenie na ktorom indexe mam zapisat zaznam.
+            //velkost adresy 
+            int temp = BitConverter.GetBytes(AdresaPrvehoRecordu).Length;
+            Array.Copy(BitConverter.GetBytes(AdresaPrvehoRecordu), 0, poleBytov, temp_index, temp);
+            temp_index += temp;
+
             foreach (var x in PoleRecordov)
             {
-                i++;
                 if (hasAddress)
                 {
-                    Array.Copy(x.ToByteArray(true), 0, poleBytov, i*x.GetAddressSize(), x.GetAddressSize());
+                    temp_index += x.GetAddressSize();
+                    Array.Copy(x.ToByteArray(true), 0, poleBytov, temp_index, x.GetAddressSize());
                 }
                 else
                 {
-                    Array.Copy(x.ToByteArray(false), 0, poleBytov, i * x.GetSize(), x.GetSize());
+                    temp_index +=  x.GetSize();
+                    Array.Copy(x.ToByteArray(false), 0, poleBytov, temp_index, x.GetSize());
                }
             }
             return poleBytov;
@@ -140,17 +155,22 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 ? new byte[PoleRecordov[0].GetAddressSize()]
                 : new byte[PoleRecordov[0].GetSize()];
             //premena na pomoc s indexom pri kopirovani arrayov bytov. 
+            int temp_index = 0;
+            //adresa prveho
+            AdresaPrvehoRecordu = BitConverter.ToInt32(byteArray, 0);
+            temp_index = BitConverter.GetBytes(AdresaPrvehoRecordu).Length;
             int i = 0;
             foreach (var x in PoleRecordov)
             {
-                i++;
-                if (hasAdress)
-                {
-                    Array.Copy(byteArray, i*x.GetAddressSize(), temp, 0, x.GetAddressSize());
+                 if (hasAdress)
+                 {
+                     temp_index += x.GetAddressSize();
+                    Array.Copy(byteArray, temp_index, temp, 0, x.GetAddressSize());
                 }
                 else
                 {
-                    Array.Copy(byteArray, i * x.GetSize(), temp, 0, x.GetSize());
+                    temp_index += x.GetAddressSize();
+                    Array.Copy(byteArray, temp_index, temp, 0, x.GetSize());
                 }
                 //pridam novy record z pomocnych bytov
                 x.FromByteArray(temp,hasAdress);
@@ -168,6 +188,14 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <returns>Hodnotu adresy, kde bol pridany zaznam. </returns>
         public int PridajRecord(Record record)
         {
+            //ak pridavam prvy record, tak tam nastavim aj adresu prveho recordu. 
+            if (AdresaPrvehoRecordu == -1 || PocetPlatnych == 0)
+            {
+                PoleRecordov[0] = record;
+                AdresaPrvehoRecordu = record.Address;
+                PocetPlatnych++;
+                return 0;
+            }
             for (int i = 0; i < PocetZaznamov; i++)
             {
                 //ak record nie je validny, tak tam pridam dany record. 
