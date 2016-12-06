@@ -36,13 +36,17 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         /// <summary>
         /// Pomocny block. Temporarny. 
+        /// Je to prvy blok v subore - obsahuje nasledovne informacie:
+        /// Prazdny blok - adresa
+        /// Volny blok   - adresa
+        /// Pocet Blokov - adresa
         /// </summary>
-        private Block _tempBlock;
+        private Block _prvyBlock;
 
         /// <summary>
-        /// Pomocny blok temporarny 2. 
+        /// Pomocny blok temporarny. 
         /// </summary>
-        private Block _tempBlock2;
+        private Block _tempBlock;
         /// <summary>
         /// Object FileStream - pouzime ho na citanie a zapisovanie do suboru. 
         /// </summary>
@@ -54,7 +58,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         public NeusporiadanySubor(Block blok, string nazovSuboru)
         {
-            _tempBlock = blok;
+            _prvyBlock = blok;
             //zistim ci subor nahodou neexistuje
             if (File.Exists(nazovSuboru))
                 using (_fileStream = new FileStream(nazovSuboru, FileMode.OpenOrCreate, FileAccess.ReadWrite))
@@ -75,20 +79,23 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         #endregion
 
-
-
-        #region Metody
-
+        
+        #region Metody - nacitanie, zapisanie - Blocku
+        /// <summary>
+        /// Metoda zapise blok do suboru. 
+        /// </summary>
+        /// <param name="adresaBloku"></param>
+        /// <param name="poleBytov"></param>
         private void ZapisBlok(int adresaBloku, byte[] poleBytov)
         {
             //vypocitam kolko zabera prvy block
-            int temp = adresaBloku*_tempBlock.GetSize();
+            int temp = adresaBloku*_prvyBlock.GetSize();
 
             //seeknem na dany index
             //a odtial zacnem potom zapisovat. 
             _fileStream.Seek(temp, SeekOrigin.Begin);
             //zapisem dane byty na dany index
-            _fileStream.WriteAsync(poleBytov, 0, _tempBlock.GetSize());
+            _fileStream.WriteAsync(poleBytov, 0, _prvyBlock.GetSize());
         }
 
         /// <summary>
@@ -97,14 +104,17 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// </summary>
         private void ZapisPrvyBlok()
         {
-            var poleBytov = new byte[_tempBlock.GetSize()];
+            var poleBytov = new byte[_prvyBlock.GetSize()];
             int temp_index = 0;
+            //prazdny blok 
             int temp = BitConverter.GetBytes(PrazdnyBlok).Length;
             Array.Copy(BitConverter.GetBytes(PrazdnyBlok), 0, poleBytov, temp_index, temp );
             temp_index += temp;
+            //volny blok 
              temp = BitConverter.GetBytes(VolnyBlok).Length;
             Array.Copy(BitConverter.GetBytes(VolnyBlok), 0, poleBytov, temp_index, temp);
             temp_index += temp;
+            //pocet blokov. 
             temp = BitConverter.GetBytes(PocetBlokov).Length;
             Array.Copy(BitConverter.GetBytes(PocetBlokov), 0, poleBytov, temp_index, temp);
           //Seeknem na zaciatok
@@ -112,7 +122,10 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //zapisem dany blok na nulty index. 
             ZapisBlok(0, poleBytov);
         }
-
+        /// <summary>
+        /// Metoda precita prvy blok zo suboru. 
+        /// Prvy blok obsahu informacie o tom, ktory blok je volny, do ktoreho sa da zapisat a kolko je tam bloko. 
+        /// </summary>
         private void PrecitajPrvyBlok()
         {
             //pocet vsetkych bytov troch premennych 
@@ -131,6 +144,34 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //pocet blokov
             PocetBlokov = BitConverter.ToInt32(poleBytov, temp);temp = 0; 
          }
+
+        public Block PrecitajBlok(int adresaBloku)
+        {
+            //copy konstruktorom vytvorim novy block
+            _tempBlock = new Block(_prvyBlock);
+            //vytvorim pole bytov, ktore idem citat
+            byte [] poleBytov = new byte[_tempBlock.GetSize()];
+            //vycistim blok - nastavim dane recordy na nevalidne
+            _tempBlock.VycistiBlok();
+            //nastavim pomocnu premenu na velkost poctu bytov v bloku
+            //je to index od ktoreho budem seekovat.
+            int temp = _tempBlock.GetSize();
+            //seeknem na dany index
+            _fileStream.Seek(adresaBloku*temp, SeekOrigin.Begin);
+            //precitam dane byty zo suboru
+            _fileStream.Read(poleBytov, 0, temp);
+            //nastavim blok z danych dat. 
+            _tempBlock.FromByteArray(poleBytov, false);
+            //vratim blok ktory som precitala.
+            return _tempBlock;
+        }
+
+        #endregion
+
+        #region MyRegion
+
+        
+
 
         #endregion
 
