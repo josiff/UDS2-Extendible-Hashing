@@ -57,7 +57,7 @@ namespace DataStructureLogic
             }
             else if (vinCislo == "")
             {
-                return "Neplatne VINo";
+                return "Neplatne VIN";
             }
             else
             {
@@ -79,25 +79,34 @@ namespace DataStructureLogic
         /// <returns></returns>
         public string PridanieAuto(string evidencneCisloVozidla, string vinCislo, string pocetNapravs, string prevadzkovaHmotnosts, bool vPatrani, DateTime koniecPlatnostiStk, DateTime koniecPlatnostiEk)
         {
+            string errors = "";
             int pocetNaprav;
             int prevadzkovaHmotnost;
-            if (evidencneCisloVozidla == "")
+            errors += (evidencneCisloVozidla == "") ? "Nespravne evidencne cislo..\n" : "";
+            errors += (!Int32.TryParse(pocetNapravs, out pocetNaprav)) ?"Nebolo zadany spravny vstup pre: " + "Pocet naprav.\n" : "";
+            errors += (!Int32.TryParse(prevadzkovaHmotnosts, out prevadzkovaHmotnost)) ? "Nebolo zadany spravny vstup pre: " + "Prevadzkova hmotnost.\n" : "";
+            errors += (evidencneCisloVozidla.Length > maxEvidenceCislo)
+                ? "Evidencne cislo musi obsahovat najviac "+ maxEvidenceCislo+ " znakov.\n" : "";
+            errors += (vinCislo.Length > maxVinCislo)
+                ? "VIN cislo musi obsahovat najviac "+ maxVinCislo+ " znakov.\n" : "";
+
+            if (errors.Equals(""))
             {
-                return "Nespravne evidencne cislo. ";
+                bool pridaj = zariadenie.PridanieAuto(evidencneCisloVozidla, vinCislo, pocetNaprav, prevadzkovaHmotnost,
+                    vPatrani,
+                    koniecPlatnostiStk, koniecPlatnostiEk);
+                Auto auto = new Auto(evidencneCisloVozidla, vinCislo, pocetNaprav, prevadzkovaHmotnost, vPatrani,
+                    koniecPlatnostiStk, koniecPlatnostiEk);
+                return pridaj
+                    ? "Do zariadenia bolo uspesne pridane auto. "
+                    : "Pridanie auta bolo neuspesne." + auto.ToString();
             }
-            if (!Int32.TryParse(pocetNapravs, out pocetNaprav))
+            else
             {
-                return "Nebolo zadany spravny vstup pre: " + "Pocet naprav";
-            }
-            else if(!Int32.TryParse(prevadzkovaHmotnosts, out prevadzkovaHmotnost))
-            {
-                return "Nebolo zadany spravny vstup pre: " + "Prevadzkova hmotnost";
+                return errors;
             }
 
-           bool pridaj =   zariadenie.PridanieAuto(evidencneCisloVozidla, vinCislo, pocetNaprav, prevadzkovaHmotnost, vPatrani,
-                koniecPlatnostiStk, koniecPlatnostiEk);
-            Auto auto = new Auto(evidencneCisloVozidla, vinCislo, pocetNaprav, prevadzkovaHmotnost, vPatrani, koniecPlatnostiStk, koniecPlatnostiEk);
-            return pridaj ? "Do zariadenia bolo uspesne pridane auto. " : "Pridanie auta bolo neuspesne." + auto.ToString();
+          
         }
       
         /// Vyradenie 
@@ -148,17 +157,18 @@ namespace DataStructureLogic
         {
             int pocetNaprav;
             int prevadzkovaHmotnost;
-            if (evidencneCislo == "")
+            string errors = "";
+            errors += (evidencneCislo == "") ? "Nespravne evidencne cislo.\n" : "";
+            errors += (!Int32.TryParse(pocetNapravs, out pocetNaprav)) ? "Nebolo zadany spravny vstup pre: " + "Pocet naprav.\n" : "";
+            errors += (!Int32.TryParse(prevadzkovaHmotnosts, out prevadzkovaHmotnost)) ? "Nebolo zadany spravny vstup pre: " + "Prevadzkova hmotnost\n" : "";
+            errors += (evidencneCislo.Length > maxEvidenceCislo)
+                ? "Evidencne cislo musi obsahovat najviac " + maxEvidenceCislo + " znakov.\n" : "";
+            errors += (vinCislo.Length > maxVinCislo)
+                ? "VIN cislo musi obsahovat najviac " + maxVinCislo + " znakov.\n" : "";
+
+            if (!errors.Equals(""))
             {
-                return "Nespravne evidencne cislo. ";
-            }
-            if (!Int32.TryParse(pocetNapravs, out pocetNaprav))
-            {
-                return "Nebol zadany spravny vstup pre: " + "Pocet naprav";
-            }
-            else if (!Int32.TryParse(prevadzkovaHmotnosts, out prevadzkovaHmotnost))
-            {
-                return "Nebol zadany spravny vstup pre: " + "Prevadzkova hmotnost";
+                return errors;
             }
             else
             {
@@ -209,27 +219,21 @@ namespace DataStructureLogic
             string errorHlasky = "";
             int evidencneCisloPreukazu;
             int dopravnePriestupky;
-            if (!Int32.TryParse(evidencneCisloPreukazus, out evidencneCisloPreukazu))
-            {
-                errorHlasky += "Nebol zadany spravny vstup pre: " + "Cislo vodickeho.\n";
-            }
-             if (!Int32.TryParse(dopravnePriestupkys, out dopravnePriestupky))
-            {
-                errorHlasky += "Nebol zadany spravny vstup pre: " + "Dopravne priestupky.\n";
-            }
+            errorHlasky += (!Int32.TryParse(evidencneCisloPreukazus, out evidencneCisloPreukazu)) ? "Nebol zadany spravny vstup pre: " + "Cislo vodickeho.\n" : "";
+            errorHlasky += (!Int32.TryParse(dopravnePriestupkys, out dopravnePriestupky)) ?"Nebol zadany spravny vstup pre: " + "Dopravne priestupky.\n" : "";
             errorHlasky += (menoVodica == "") ? "Nebol zadany spravny vstup pre: " + "Meno vodica.\n" : "";
             errorHlasky += (priezviskoVodica == "") ? "Nebol zadany spravny vstup pre: " + "Priezvisko vodica.\n" : "";
             errorHlasky += (menoVodica.Length > maxMeno) ? "Meno vodica musi obsahovat najviac 35 znakov.\n" : "";
             errorHlasky += (priezviskoVodica.Length > maxPriezvisko) ?  "Priezvisko vodica musi obsahovat najviac 35 znakov.\n" : "";
-
+            VodickyPreukaz vodicky = new VodickyPreukaz(menoVodica, priezviskoVodica, evidencneCisloPreukazu, ukonceniePlatnosti, zakazViestVozidlo, dopravnePriestupky);
 
             if (errorHlasky == "")
             {
                 return zariadenie.PridanieVodickeho(menoVodica, priezviskoVodica, evidencneCisloPreukazu,
                     ukonceniePlatnosti,
                     zakazViestVozidlo, dopravnePriestupky)
-                    ? "Vodicky bol uspesne pridany. "
-                    : "Pridanie vodickeho preukazu bolo neuspesne. ";
+                    ? "Vodicky bol uspesne pridany. " + vodicky.ToString()
+                    : "Pridanie vodickeho preukazu bolo neuspesne. "+ vodicky.ToString();
             }
             else
             {
@@ -276,17 +280,10 @@ namespace DataStructureLogic
             string errorHlasky = "";
             int evidencneCisloPreukazu;
             int dopravnePriestupky;
-            if (!Int32.TryParse(evidencneCisloPreukazus, out evidencneCisloPreukazu))
-            {
-                errorHlasky += "Nebol zadany spravny vstup pre: " + "Cislo vodickeho.\n";
-            }
-            if (!Int32.TryParse(dopravnePriestupkys, out dopravnePriestupky))
-            {
-                errorHlasky += "Nebol zadany spravny vstup pre: " + "Dopravne priestupky.\n";
-            }
+            errorHlasky += (!Int32.TryParse(evidencneCisloPreukazus, out evidencneCisloPreukazu)) ? "Nebol zadany spravny vstup pre: " + "Cislo vodickeho.\n" : "";
+            errorHlasky += (!Int32.TryParse(dopravnePriestupkys, out dopravnePriestupky)) ? "Nebol zadany spravny vstup pre: " + "Dopravne priestupky.\n" : "";
             errorHlasky += (menoVodica == "") ? "Nebol zadany spravny vstup pre: " + "Meno vodica.\n" : "";
             errorHlasky += (priezviskoVodica == "") ? "Nebol zadany spravny vstup pre: " + "Priezvisko vodica.\n" : "";
-
             errorHlasky += (menoVodica.Length > maxMeno) ? "Meno vodica musi obsahovat najviac 35 znakov.\n" : "";
             errorHlasky += (priezviskoVodica.Length > maxPriezvisko) ? "Priezvisko vodica musi obsahovat najviac 35 znakov.\n" : "";
 

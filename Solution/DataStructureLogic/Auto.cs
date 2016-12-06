@@ -173,8 +173,8 @@ namespace DataStructureLogic
         public override string ToString()
         {
             string s = "\nEVC: " + EvidencneCisloVozidla + "\tVIN cislo: " + VinCislo +
-                       "\tPocet naprav: " + PocetNaprav + "\nPrevadzkova hmotnost: " + PrevadzkovaHmotnost
-                       + "V patrani: " + ((VPatrani) ? "ANO" : "NIE")
+                       "\nPocet naprav: " + PocetNaprav + "\tPrevadzkova hmotnost: " + PrevadzkovaHmotnost
+                       + "\tV patrani: " + ((VPatrani) ? "ANO" : "NIE")
                        + "\tKoniec platnosti STK: " + KoniecPlatnostiSTK.ToShortDateString()
                        + "\tKoniec platnosti EK: " + KoniecPlatnostiEK.ToShortDateString();
             string s2 = "\nAdresa: " + Address + "\tHash code: " + Key + "\tSize: " + GetSize() + "\tAddress Size: " +

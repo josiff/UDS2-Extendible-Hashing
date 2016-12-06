@@ -7,7 +7,7 @@ using DataStructuresLibrary.Extendible_Hashing;
 
 namespace DataStructureLogic
 {
- public   class VodickyPreukaz : Record
+    public class VodickyPreukaz : Record
     {
         #region Properties 
         //        Záznam o vodičskom preukaze má uložené nasledujúce informácie:
@@ -44,6 +44,8 @@ namespace DataStructureLogic
         public int DopravnePriestupky { get; set; }
 
         private const int _pocet_bytov_dopravne_prieskumnik = 4;
+
+        public bool JePotrebnyPlnyVypis = true;
 
         #endregion
 
@@ -118,13 +120,9 @@ namespace DataStructureLogic
 
         public override int GetAddressSize()
         {
-            return  _pocet_bytov_address + _pocet_bytov_isvalid + _pocet_bytov_key;
+            return _pocet_bytov_address + _pocet_bytov_isvalid + _pocet_bytov_key;
         }
 
-        public override string ToString()
-        {
-            throw new NotImplementedException();
-        }
 
         public override bool Equals(object obj)
         {
@@ -141,7 +139,7 @@ namespace DataStructureLogic
                 {
                     return true;
                 }
-             
+
             }
             return false;
         }
@@ -155,5 +153,29 @@ namespace DataStructureLogic
         {
             throw new NotImplementedException();
         }
+
+        public override string ToString()
+        {
+            string s = "\nEvidencne Cislo: " + EvidencneCisloPreukazu +"\nMeno a Priezvisko: " + MenoVodica + " " + PriezviskoVodica
+                
+                + "\tUkoncenie Platnosti: " + UkonceniePlatnosti.ToShortDateString()
+                + "\t" + (ZakazViestVozidlo ? "POVOLENE" : "ZAKAZ") + " Viest Vozidlo \t " +
+                "Pocet dopravnych priestupkov: " + DopravnePriestupky;
+
+            string s2 = "\nAdresa: " + Address + "\tHash code: " + Key + "\tSize: " + GetSize() + "\tAddress Size: " +
+                GetAddressSize();
+
+            if (JePotrebnyPlnyVypis)
+            {
+                return s + s2;
+            }
+            else
+            {
+                return s2;
+            }
+        }
+
+
+
     }
 }

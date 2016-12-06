@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUI_Dopravny_Park"
         mc:Ignorable="d"
-        Title="Semestralna Praca c. 2 - Dopravny park - Chovancova Olga" Height="697.619" Width="832.536">
+        Title="Semestralna Praca c. 2 - Dopravny park - Chovancova Olga" Height="696" Width="1132">
     <Grid Margin="0,0,2,15">
         <Grid.RowDefinitions>
             <RowDefinition Height="45*"/>
@@ -31,7 +31,7 @@
         </Grid.ColumnDefinitions>
         <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="629" Margin="10,10,0,0" VerticalAlignment="Top" Width="385" Grid.ColumnSpan="4" Grid.RowSpan="14">
             <TabItem Header="Auto" FontSize="16">
-                <Grid Background="#FFE5E5E5" Height="608" VerticalAlignment="Top">
+                <Grid Background="#FFE5E5E5" Height="604" VerticalAlignment="Top">
                     <Label x:Name="label" Content="Evidenčné číslo vozidla" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="16"/>
                     <TextBox x:Name="t_a_evidencne_cislo_vozidla" HorizontalAlignment="Left" Height="29" Margin="280,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="89" FontSize="16" TextChanged="t_a_evidencne_cislo_vozidla_TextChanged"/>
                     <Label x:Name="label1" Content="VIN číslo" HorizontalAlignment="Left" Margin="10,46,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.715,0.381"/>
@@ -60,17 +60,17 @@
             <TabItem Header="Vodicky Preukaz" FontSize="16">
                 <Grid Background="#FFE5E5E5" Margin="0,3,4,3">
                     <Label x:Name="label7" Content="Meno vodiča" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="t_v_meno" HorizontalAlignment="Left" Height="23" Margin="204,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="161"/>
+                    <TextBox x:Name="t_v_meno" HorizontalAlignment="Left" Height="24" Margin="204,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="161"/>
                     <Label x:Name="label7_Copy" Content="Priezvisko vodiča" HorizontalAlignment="Left" Margin="10,46,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="t_v_priezvisko" HorizontalAlignment="Left" Height="23" Margin="204,54,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="161"/>
+                    <TextBox x:Name="t_v_priezvisko" HorizontalAlignment="Left" Height="25" Margin="204,52,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="161"/>
                     <Label x:Name="label8" Content="Evidenčné číslo preukazu" HorizontalAlignment="Left" Margin="10,82,0,0" VerticalAlignment="Top" Width="186"/>
-                    <TextBox x:Name="t_v_evidencneCisloPreukazu" HorizontalAlignment="Left" Height="23" Margin="204,90,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="161"/>
+                    <TextBox x:Name="t_v_evidencneCisloPreukazu" HorizontalAlignment="Left" Height="25" Margin="204,88,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="161"/>
                     <Label x:Name="label9" Content="Dátum ukončenia platnosti" HorizontalAlignment="Left" Margin="10,129,0,0" VerticalAlignment="Top"/>
-                    <DatePicker x:Name="t_v_datum_ukoncenia_platnosti" SelectedDate="1/1/2030" HorizontalAlignment="Left" Margin="241,131,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="t_v_zakaz_viest_vozidlo" Content="Zákaz" HorizontalAlignment="Left" Margin="304,171,0,0" VerticalAlignment="Top"/>
+                    <DatePicker x:Name="t_v_datum_ukoncenia_platnosti" SelectedDate="1/1/2030" HorizontalAlignment="Left" Margin="247,131,0,0" VerticalAlignment="Top" Width="128"/>
+                    <CheckBox x:Name="t_v_zakaz_viest_vozidlo" Content="Zákaz" HorizontalAlignment="Left" Margin="299,171,0,0" VerticalAlignment="Top" Width="66"/>
                     <Label x:Name="label10" Content="Zákaz viesť motorové vozidlo" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="label11" Content="Počet dopravných priestupkov" HorizontalAlignment="Left" Margin="10,201,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="t_v_pocet_dopravnych_priestupkov" HorizontalAlignment="Left" Height="23" Margin="284,205,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="81"/>
+                    <TextBox x:Name="t_v_pocet_dopravnych_priestupkov" HorizontalAlignment="Left" Height="26" Margin="284,201,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="81"/>
                     <Button x:Name="b_v_pridanie_vodicak" Background="DarkSeaGreen" Content="Pridanie" HorizontalAlignment="Left" Margin="10,259,0,0" VerticalAlignment="Top" Width="175" Height="39" FontWeight="Bold" Click="b_v_pridanie_vodicak_Click"/>
                     <Button x:Name="b_v_zmena_vodicak" Background="DarkSalmon" Content="Zmena" HorizontalAlignment="Left" Margin="195,259,0,0" VerticalAlignment="Top" Width="170" Height="39" FontWeight="Bold" Click="b_v_zmena_vodicak_Click"/>
                     <Button x:Name="b_v_vyhladaj_vodicak" Background="LightBlue" Content="Vyhľadanie " HorizontalAlignment="Left" Margin="10,371,0,0" VerticalAlignment="Top" Width="175" Height="51" FontWeight="Bold" Click="b_v_vyhladaj_vodicak_Click"/>
@@ -94,11 +94,11 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Label x:Name="label6" Content="Výstupný terminál" Grid.Column="3" HorizontalAlignment="Left" Margin="32,7,0,0" VerticalAlignment="Top" FontSize="16" Height="31" Width="138"/>
+        <Label x:Name="label6" Content="Výstupný terminál" Grid.Column="2" HorizontalAlignment="Left" Margin="138,8,0,0" VerticalAlignment="Top" FontSize="16" Height="31" Width="138" Grid.ColumnSpan="2"/>
         <ScrollViewer HorizontalAlignment="Right" Height="595" Margin="0,0,0,0" 
-                      VerticalAlignment="Top" Width="413" FontSize="16" Grid.Column="3" Grid.Row="1" Grid.RowSpan="13" >
+                      VerticalAlignment="Top" Width="702" FontSize="16" Grid.Column="2" Grid.Row="1" Grid.RowSpan="13" Grid.ColumnSpan="2" >
             <TextBox x:Name="vystup"   Background="LightYellow" Height="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-         ScrollViewer.VerticalScrollBarVisibility="Auto" Width="392" Grid.Column="3" Grid.Row="1" Grid.RowSpan="13" />
+         ScrollViewer.VerticalScrollBarVisibility="Auto" Width="668" Grid.Column="3" Grid.Row="1" Grid.RowSpan="13" />
         </ScrollViewer>
 
     </Grid>

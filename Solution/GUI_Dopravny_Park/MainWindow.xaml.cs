@@ -28,11 +28,7 @@ namespace GUI_Dopravny_Park
             app = new AppCore();
         }
 
-        private void textBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
+     
         private void t_a_evidencne_cislo_vozidla_TextChanged(object sender, TextChangedEventArgs e)
         {
 
