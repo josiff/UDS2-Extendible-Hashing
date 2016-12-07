@@ -211,13 +211,10 @@ namespace DataStructuresLibrary.Extendible_Hashing
             }
             for (int i = 0; i < PocetZaznamov; i++)
             {
-                //ak record nie je validny, tak tam pridam dany record. 
-                if (!PoleRecordov[i].IsValid)
-                {
                     PoleRecordov[i] = record;
                     PocetPlatnych++;
                     return i;
-                }
+               
             }
             //nebol pridany, pretoze uz tam nie su ziadne volne bloky. 
             return -1;

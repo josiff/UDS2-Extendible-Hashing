@@ -17,8 +17,6 @@ namespace ConsoleApplication_Hashing
             Number = number;
         }
 
-      
-
         public override string ToString()
         {
             return "" + Number;
@@ -26,27 +24,24 @@ namespace ConsoleApplication_Hashing
 
         public override byte[] ToByteArray()
         {
-            throw new NotImplementedException();
+            return BitConverter.GetBytes(Number);
         }
 
         public override void FromByteArray(byte[] byteArray)
         {
-            throw new NotImplementedException();
+            Number = BitConverter.ToInt32(byteArray, 0);
         }
 
         public override bool Equals(object obj)
         {
-            throw new NotImplementedException();
+            var test = (Test) obj;
+            return test != null && Number == test.Number;
         }
-
-      
-
+        
         public override int GetSize()
         {
-            throw new NotImplementedException();
+            return 4;
         }
-
-     
       }
 
 }

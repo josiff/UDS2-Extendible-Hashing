@@ -14,7 +14,11 @@ namespace ConsoleApplication_Hashing
         static void Main(string[] args)
         {
             ExtendibleHashing<Auto> ex = new ExtendibleHashing<Auto>("auto.txt", 40);
-          
+            Console.WriteLine(ex.ToString());
+            ex.Adresar[0] = 34455435;
+            ex.Adresar[1] = 8888435;
+
+            Console.WriteLine(ex.ToString());
             
             Auto auto = new Auto("1234567", "1234567", 4, 544, false, DateTime.Today.AddDays(433),
                 DateTime.Today.AddDays(99));
@@ -32,26 +36,9 @@ namespace ConsoleApplication_Hashing
             Block bloktemp = new Block(60, 2,77);
             bloktemp.PridajRecord((Record) auto2);
             bloktemp.PridajRecord((Record) auto);
-            NeusporiadanySubor ns = new NeusporiadanySubor(bloktemp, "auta1.txt");
-            ns.ZapisBlok(1, blok.ToByteArray());
-            Console.WriteLine(ns.ToString());
-            ns.ZapisZaznam((Record)auto);
-            Console.WriteLine(ns.ToString());
-            ns.ZapisZaznam((Record)auto2);
-            Console.WriteLine("subor");
-            Console.WriteLine(ns.ToString());
+        
             Record r = blok.NajdiRecord((Record)auto);
-               r =   ns.PrecitajZaznam(1, auto2, false);
-
-            Console.WriteLine(r?.ToString());
-
-            Block bl = ns.PrecitajBlok(-1);
-            Console.WriteLine(bl.ToString());
-            bl = ns.PrecitajBlok(-253);
-            Console.WriteLine(bl.ToString());
-
-            Console.WriteLine(ns.ToString());
-            
+         
             Console.ReadLine();
             Console.ReadKey();
         }

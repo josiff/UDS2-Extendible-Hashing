@@ -84,7 +84,11 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// </summary>
         /// <param name="obj">Record</param>
         /// <returns>Hodnotu ci sa rovnaju. </returns>
-        public abstract override bool Equals(object obj);
+        public virtual bool Equals(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Abstraktna metoda, ktora vypise dany zaznam do stringu. 
         /// </summary>

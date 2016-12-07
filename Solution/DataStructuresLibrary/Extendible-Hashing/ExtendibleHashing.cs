@@ -24,7 +24,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         public int HlbkaAdresara { get; set; }
 
         public int PocetBlokov { get; set; }
-        public FileStream Seek { get; set; }
+        public FileStream _fileStream { get; set; }
         public int VelkostZaznamu { get; set; }
         public int PocetZaznamovVBloku { get; set; }
     #endregion
@@ -33,8 +33,15 @@ namespace DataStructuresLibrary.Extendible_Hashing
         {
             VelkostZaznamu = Activator.CreateInstance<T>().GetSize();
             PocetZaznamovVBloku = pocetZaznamovBloku;
-
+            _fileStream = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            Adresar = new[] {0, 0};
         }
+
+        /// <summary>
+        /// Metoda zobrazi informacie hashovatelneho suboru. 
+        /// </summary>
+        /// <returns></returns>
+     
 
         #region Methods
         /// <summary>
@@ -119,6 +126,20 @@ namespace DataStructuresLibrary.Extendible_Hashing
             return false;
         }
 
+        public override string ToString()
+        {
+            string s =$"{nameof(HlbkaAdresara)}: {HlbkaAdresara}," +
+                   $" {nameof(PocetBlokov)}: {PocetBlokov}," +
+               $" {nameof(VelkostZaznamu)}: {VelkostZaznamu}," +
+                   $" {nameof(PocetZaznamovVBloku)}: {PocetZaznamovVBloku}";
+            s += "\nObsahuje nasledujuce adresy: ";
+            foreach (var a in Adresar)
+            {
+                s += a + ", ";
+            }
+            return s;
+        }
+
         /// <summary>
         /// Operacia Vymaz
         /// Efektivnost: 1-3 prenosy. 
@@ -143,7 +164,6 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <returns></returns>
         public bool Delete(Record data)
         {
-
             return false;
         }
 
@@ -202,19 +222,11 @@ namespace DataStructuresLibrary.Extendible_Hashing
             
             return findRecord;
         }
-
-        
         #endregion
-
-
+        
         public Block VyhladajBlock()
         {
             return default(Block);
         }
-
-
-
-
-
     }
 }
