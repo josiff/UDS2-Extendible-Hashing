@@ -13,7 +13,7 @@ namespace ConsoleApplication_Hashing
     {
         static void Main(string[] args)
         {
-            ExtendibleHashing ex = new ExtendibleHashing();
+            ExtendibleHashing<Auto> ex = new ExtendibleHashing<Auto>("auto.txt", 40);
           
             
             Auto auto = new Auto("1234567", "1234567", 4, 544, false, DateTime.Today.AddDays(433),
@@ -21,7 +21,7 @@ namespace ConsoleApplication_Hashing
             Auto auto2 = new Auto("23", "32", 4, 544, false, DateTime.Today.AddDays(433),
                 DateTime.Today.AddDays(99));
             Console.WriteLine(auto.ToString());
-            Block blok = new Block(40, 1 );
+            Block blok = new Block(2, 3, 78);
             Console.WriteLine(blok.ToString());
 
            blok.PridajRecord(auto);
@@ -29,7 +29,7 @@ namespace ConsoleApplication_Hashing
             Console.WriteLine(blok.ToString());
          
             
-            Block bloktemp = new Block(60, 2);
+            Block bloktemp = new Block(60, 2,77);
             bloktemp.PridajRecord((Record) auto2);
             bloktemp.PridajRecord((Record) auto);
             NeusporiadanySubor ns = new NeusporiadanySubor(bloktemp, "auta1.txt");

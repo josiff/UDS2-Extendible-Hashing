@@ -17,14 +17,21 @@ namespace ConsoleApplication_Hashing
             Number = number;
         }
 
-        public override void FromByteArray(byte[] byteArray, bool hasAdress = true)
-        {
-            throw new NotImplementedException();
-        }
+      
 
         public override string ToString()
         {
             return "" + Number;
+        }
+
+        public override byte[] ToByteArray()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void FromByteArray(byte[] byteArray)
+        {
+            throw new NotImplementedException();
         }
 
         public override bool Equals(object obj)
@@ -32,26 +39,14 @@ namespace ConsoleApplication_Hashing
             throw new NotImplementedException();
         }
 
-        public override byte[] ToByteArray(bool allData = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override int GetHash()
-        {
-            throw new NotImplementedException();
-        }
+      
 
         public override int GetSize()
         {
             throw new NotImplementedException();
         }
 
-        public override int GetAddressSize()
-        {
-            throw new NotImplementedException();
-        }
-
+     
       }
 
 }

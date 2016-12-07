@@ -92,7 +92,6 @@ namespace DataStructureLogic
             KoniecPlatnostiSTK = koniecPlatnostiStk;
             KoniecPlatnostiEK = koniecPlatnostiEk;
             IsValid = true;
-            Address = -1;
         }
 
         /// <summary>
@@ -108,7 +107,6 @@ namespace DataStructureLogic
             VPatrani = auto.VPatrani;
             KoniecPlatnostiSTK = auto.KoniecPlatnostiSTK;
             KoniecPlatnostiEK = auto.KoniecPlatnostiEK;
-            Address = auto.Address;
             Key = auto.Key;
             IsValid = auto.IsValid;
 

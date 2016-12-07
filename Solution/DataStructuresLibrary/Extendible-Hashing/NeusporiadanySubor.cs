@@ -200,7 +200,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //precitam dane byty zo suboru
             _fileStream.Read(poleBytov, 0, temp);
             //nastavim blok z danych dat. 
-            _tempBlock.FromByteArray(poleBytov, false);
+            _tempBlock.FromByteArray(poleBytov);
             //vratim blok ktory som precitala.
             return _tempBlock;
         }
@@ -403,14 +403,14 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <param name="adresaBloku"></param>
         private void _pridajDoVolnehoBloku(int adresaBloku)
         {
-            _prvyBlock.AdresaPrvehoRecordu = adresaBloku;
+            //_prvyBlock.AdresaPrvehoRecordu = adresaBloku;
             VolnyBlok = adresaBloku;
         }
 
         private void _pridajDoPrazdneho(int adresaBloku)
         {
             //adresu prveho bloku nastavim na prazdny blok 
-            _prvyBlock.AdresaPrvehoRecordu = PrazdnyBlok;
+//_prvyBlock.AdresaPrvehoRecordu = PrazdnyBlok;
             //zapisem blok s danou adresou
             ZapisBlok(adresaBloku, _prvyBlock.ToByteArray());
             //ak je nastavena adresa volneho bloku, tak tam zapisem prazdny blok. 
@@ -425,20 +425,20 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         private void _vymazBlokZPrazdnychBlokov(int adresaMazaneho)
         {
-            int adrsesaPrvehoRecordu = _tempBlock.AdresaPrvehoRecordu;
+          //  int adrsesaPrvehoRecordu = _tempBlock.AdresaPrvehoRecordu;
             //ak mazane sa rovna praznemu bloku 
             if (adresaMazaneho == PrazdnyBlok)
             {
-                PrazdnyBlok = adrsesaPrvehoRecordu;
-                _prvyBlock.AdresaPrvehoRecordu = -1;
+           //     PrazdnyBlok = adrsesaPrvehoRecordu;
+          //      _prvyBlock.AdresaPrvehoRecordu = -1;
             }
             //ak adresa je rozna -1, resp. musi byt nastavena
-            if (adrsesaPrvehoRecordu != -1)
+         //   if (adrsesaPrvehoRecordu != -1)
             {
                 //precitam prazdny blok 
-                PrecitajBlok(adrsesaPrvehoRecordu);
+           //     PrecitajBlok(adrsesaPrvehoRecordu);
                 //zapisem druhu premenu blok do suboru
-                ZapisBlok(adrsesaPrvehoRecordu, _tempBlock.ToByteArray());
+//ZapisBlok(adrsesaPrvehoRecordu, _tempBlock.ToByteArray());
             }
         }
 
@@ -446,13 +446,13 @@ namespace DataStructuresLibrary.Extendible_Hashing
         {
             int rodic = VolnyBlok;
             //adresa prveho bloku - temporarneho
-            int vymazPotomka = _prvyBlock.AdresaPrvehoRecordu;
+        //    int vymazPotomka = _prvyBlock.AdresaPrvehoRecordu;
             if (VolnyBlok == adresaMazaneho)
             {
                 //nastavim adresu prveho pomocneho bloku na -1
-                _prvyBlock.AdresaPrvehoRecordu = -1;
+            //    _prvyBlock.AdresaPrvehoRecordu = -1;
                 //nastavim adresu volneho bloku na danu adresu
-                VolnyBlok = vymazPotomka;
+            //    VolnyBlok = vymazPotomka;
                 //vratim sa spat
                 return;
             }
@@ -462,13 +462,13 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 //precitam blok z druheho temp bloku
                 _tempBlock = PrecitajBlok(rodic);
 
-                if (_tempBlock.AdresaPrvehoRecordu == adresaMazaneho)
+               // if (_tempBlock.AdresaPrvehoRecordu == adresaMazaneho)
                 {
                     ZapisBlok(rodic, _tempBlock.ToByteArray());
                     return;
                 }
                 //prechadzam dovtedy, potkym sa nenastavi rodic na nejaku inu hodnotu ako -1
-                rodic = _tempBlock.AdresaPrvehoRecordu;
+             //   rodic = _tempBlock.AdresaPrvehoRecordu;
 
             }
         }
