@@ -94,8 +94,6 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //Vkladanie do bloku b - Princip
             //Nedoslo k preplneniu => vlozi sa priamo
           
-           
-
             bool vlozene = false;
             while (!vlozene)
             {
@@ -131,8 +129,6 @@ namespace DataStructuresLibrary.Extendible_Hashing
                         vlozene = false;
                     }
                     
-           
-
                     //rozdel blok
                     //split 
                     //vytvorenie 
