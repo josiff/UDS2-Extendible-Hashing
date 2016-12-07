@@ -12,26 +12,6 @@ namespace DataStructuresLibrary.Extendible_Hashing
     /// </summary>
     public abstract class Record
     {
-        #region Properties
-        /// <summary>
-        /// Hodnota hovori o tom, ci je dany record validny alebo nie. 
-        /// Validny je vtedy, ak je v bloku. 
-        /// Nevalidny - ak je vymazany, alebo jednoducho nie je validny. 
-        /// </summary>
-        public bool IsValid { get; set; }
-        
-        /// <summary>
-        /// Kazdy zaznam obsahuje Hash Kluc. 
-        /// </summary>
-        public string Key { get; set; }
-        #endregion
-
-        #region Pomocne konstanty
-        public const int _pocet_bytov_isvalid = 1;
-        public const int _pocet_bytov_key = 4;
-        public const int _pocet_bytov_address = 4;
-        #endregion
-
         #region Abstraktne metody
         //Abstraknte metody, ktore vratia hodnoty properties
         /// <summary>
@@ -40,30 +20,9 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// </summary>
         /// <returns>Velkost zazanmu.</returns>
         public abstract int GetSize();
-     
-        /// <summary>
-        /// Metoda, ktora vrati Hash code daneho zaznamu. 
-        /// </summary>
-        /// <returns>Hash Code</returns>
-        public int GetHash(string key)
-        {
-            int hashcode = 0;
-            int i = 0;
-            double j;
-            //prejdem kazdy chareakter v kluci
-            foreach (var c in key)
-            {
-                //ak je dlzka kluca vacsia ako jedna - nastavim pomocnu prementu na 3 alebo 3.5 inak 1
-                double pom1 = Key.Length > 7 ? 3 : 1;
-                double pom2 = Key.Length > 7 ? 3.5 : 1;
-                i++;
-                //konvertujem char na int
-                j = Convert.ToInt32(c) / 6.0;
-                //vypocitam pomocou funkcie hash code. 
-                hashcode += Convert.ToInt32(Math.Round(Math.Pow(j, i / pom1)) * i * 1.6 * pom1 * pom2);
-            }
-            return hashcode;
-        }
+
+        public abstract int GetHash();
+
         //metody specificke pre record. 
         /// <summary>
         /// Abstraktna metoda, ktora spracuje/skonvertuje dany zaznam a vrati ho ako pole bytov. 
@@ -84,10 +43,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// </summary>
         /// <param name="obj">Record</param>
         /// <returns>Hodnotu ci sa rovnaju. </returns>
-        public virtual bool Equals(object obj)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract bool Equals(object obj);
 
         /// <summary>
         /// Abstraktna metoda, ktora vypise dany zaznam do stringu. 

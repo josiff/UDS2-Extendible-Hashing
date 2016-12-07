@@ -20,7 +20,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <summary>
         /// Pole zaznamov - Record
         /// </summary>
-        public Record[] PoleRecordov { get; set; }
+        public List<Record> PoleRecordov { get; set; }
         /// <summary>
         /// Hlbka bloku - znamena kolko bitov beriem z hash kluca
         /// </summary>

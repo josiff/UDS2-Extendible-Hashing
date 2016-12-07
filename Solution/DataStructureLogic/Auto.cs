@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using DataStructuresLibrary.Extendible_Hashing;
@@ -21,48 +22,48 @@ namespace DataStructureLogic
         public string EvidencneCisloVozidla { get; set; }
 
         public const int EvidencneCisloVozidlaMaxLength = 7;
-        private int _pocet_bytov_evc = 7;
+        private int _pocet_bajtov_evc = 7;
 
         ///VIN číslo(unikátny reťazec s maximálnou dĺžkou 17 znakov)
         public string VinCislo { get; set; }
 
         public const int VinCisloMaxLength = 17;
-        private int _pocet_bytov_vin = 17;
+        private int _pocet_bajtov_vin = 17;
 
         /// <summary>
         /// Počet náprav(celé číslo)
         /// </summary>
         public int PocetNaprav { get; set; }
 
-        private int _pocet_bytov_napravy = 4;
+        private int _pocet_bajtov_napravy = 4;
 
         /// <summary>
         /// Prevádzková hmotnosť(celé číslo)
         /// </summary>
         public int PrevadzkovaHmotnost { get; set; }
 
-        private int _pocet_bytov_hmotnost = 4;
+        private int _pocet_bajtov_hmotnost = 4;
 
         /// <summary>
         /// v pátraní(boolean hodnota)
         /// </summary>
         public bool VPatrani { get; set; }
 
-        private int _pocet_bytov_vpatrani = 1;
+        private int _pocet_bajtov_vpatrani = 1;
 
         /// <summary>
         /// dátum konca platnosti STK
         /// </summary>
         public DateTime KoniecPlatnostiSTK { get; set; }
 
-        private int _pocet_bytov_datum_stk = 10;
+        private int _pocet_bajtov_datum_stk = 10;
 
         /// <summary>
         /// dátum konca platnosti EK
         /// </summary>
         public DateTime KoniecPlatnostiEK { get; set; }
 
-        private int _pocet_bytov_datum_ek = 10;
+        private int _pocet_bajtov_datum_ek = 10;
 
         public bool JePotrebnyPlnyVypis = true;
 
@@ -130,12 +131,36 @@ namespace DataStructureLogic
         #region Override methods from Block
 
 
-
+        /// <summary>
+        /// Metoda, ktora vrati Hash code daneho zaznamu. 
+        /// </summary>
+        /// <returns>Hash Code</returns>
+        public override int GetHash()
+        {
+          /*  int hashcode = 0;
+            int i = 0;
+            double j;
+            //prejdem kazdy chareakter v kluci
+            foreach (var c in EvidencneCisloVozidla)
+            {
+                //ak je dlzka kluca vacsia ako jedna - nastavim pomocnu prementu na 3 alebo 3.5 inak 1
+                double pom1 = EvidencneCisloVozidla.Length > _pocet_bajtov_evc ? Math.Round((double) (_pocet_bajtov_evc/2), 0) : 1;
+                double pom2 = EvidencneCisloVozidla.Length > _pocet_bajtov_evc ? _pocet_bajtov_evc : 1;
+                i++;
+                //konvertujem char na int
+                j = Convert.ToInt32(c) / 6.0;
+                //vypocitam pomocou funkcie hash code. 
+                hashcode += Convert.ToInt32(Math.Round(Math.Pow(j, i / pom1)) * i * 1.6 * pom1 * pom2);
+            }
+            return hashcode;
+            */
+            return EvidencneCisloVozidla.GetHashCode();
+        }
 
         public override int GetSize()
         {
-            return _pocet_bytov_vin + _pocet_bytov_datum_ek + _pocet_bytov_datum_stk +
-                     _pocet_bytov_evc + _pocet_bytov_hmotnost + _pocet_bytov_napravy + _pocet_bytov_vpatrani;
+            return _pocet_bajtov_vin + _pocet_bajtov_datum_ek + _pocet_bajtov_datum_stk +
+                     _pocet_bajtov_evc + _pocet_bajtov_hmotnost + _pocet_bajtov_napravy + _pocet_bajtov_vpatrani;
         }
 
         public override string ToString()
@@ -161,18 +186,8 @@ namespace DataStructureLogic
             var temp = (Auto)obj;
             if (temp != null)
             {
-                //ak je hash kluc rozny od null a rovnaju sa - vrati true
-                if ((temp.Key != null) && temp.Key.Equals(Key))
-                {
-                    return true;
-                }
                 //porovnam ci sa rovnaku evidencne cisla
                 if ((temp.EvidencneCisloVozidla != null) && (temp.EvidencneCisloVozidla.Equals(EvidencneCisloVozidla)))
-                {
-                    return true;
-                }
-                //porovnam ci su rovnake vin cisla
-                if (temp.VinCislo != null && temp.VinCislo.Equals(VinCislo))
                 {
                     return true;
                 }
@@ -191,17 +206,17 @@ namespace DataStructureLogic
             byte[] poleBytov = new byte[GetSize()];
             int index = 0;
             //evidencne cislo
-            Helper_Bytes._get_pom_pole(_pocet_bytov_evc, Encoding.UTF8.GetBytes(EvidencneCisloVozidla)).CopyTo(poleBytov, index);
-            index += _pocet_bytov_evc;
-            Helper_Bytes._get_pom_pole(_pocet_bytov_vin, Encoding.UTF8.GetBytes(VinCislo)).CopyTo(poleBytov, index);
-            index += _pocet_bytov_vin;
+            Helper_Bytes._get_pom_pole(_pocet_bajtov_evc, Encoding.UTF8.GetBytes(EvidencneCisloVozidla)).CopyTo(poleBytov, index);
+            index += _pocet_bajtov_evc;
+            Helper_Bytes._get_pom_pole(_pocet_bajtov_vin, Encoding.UTF8.GetBytes(VinCislo)).CopyTo(poleBytov, index);
+            index += _pocet_bajtov_vin;
             BitConverter.GetBytes(PocetNaprav).CopyTo(poleBytov, index);
-            index += _pocet_bytov_napravy;
+            index += _pocet_bajtov_napravy;
             BitConverter.GetBytes(PrevadzkovaHmotnost).CopyTo(poleBytov, index);
-            index += _pocet_bytov_napravy;
+            index += _pocet_bajtov_napravy;
             BitConverter.GetBytes(VPatrani).CopyTo(poleBytov, index);
             Encoding.UTF8.GetBytes(KoniecPlatnostiSTK.ToString("dd.MM.yyyy")).CopyTo(poleBytov, index);
-            index += _pocet_bytov_datum_stk;
+            index += _pocet_bajtov_datum_stk;
             Encoding.UTF8.GetBytes(KoniecPlatnostiEK.ToString("dd.MM.yyyy")).CopyTo(poleBytov, index);       
             return poleBytov;
 
@@ -210,23 +225,23 @@ namespace DataStructureLogic
         {
             int temp_index = 0;
                 //evidencne cislo 
-                EvidencneCisloVozidla = Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bytov_evc).Trim('\0');
-                temp_index += _pocet_bytov_evc;
+                EvidencneCisloVozidla = Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bajtov_evc).Trim('\0');
+                temp_index += _pocet_bajtov_evc;
                 //vin cislo
-                VinCislo = Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bytov_vin).Trim('\0');
-                temp_index += _pocet_bytov_vin;
+                VinCislo = Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bajtov_vin).Trim('\0');
+                temp_index += _pocet_bajtov_vin;
                 //pocet naprav
                 PocetNaprav = BitConverter.ToInt32(byteArray, temp_index);
-                temp_index += _pocet_bytov_napravy;
+                temp_index += _pocet_bajtov_napravy;
                 //prevadzkova hmotnost
                 PrevadzkovaHmotnost = BitConverter.ToInt32(byteArray, temp_index);
-                temp_index += _pocet_bytov_napravy;
+                temp_index += _pocet_bajtov_napravy;
                 // je v patrani
                 VPatrani = BitConverter.ToBoolean(byteArray, temp_index);
-                temp_index += _pocet_bytov_vpatrani;
+                temp_index += _pocet_bajtov_vpatrani;
                 //koniec platnosti stk
                 KoniecPlatnostiSTK =
-                DateTime.ParseExact(Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bytov_datum_stk), "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                DateTime.ParseExact(Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bajtov_datum_stk), "dd.MM.yyyy", CultureInfo.InvariantCulture);
         }
         #endregion
     }
