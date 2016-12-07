@@ -23,7 +23,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
             _fileStream = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
         }
 
-        public Block NacitajBlok(int adresa)
+        public Block ReadBlok(int adresa)
         {
             //copy konstruktorom vytvorim novy block
             Block _tempBlock = new Block(_maxCount, _record);
@@ -43,7 +43,38 @@ namespace DataStructuresLibrary.Extendible_Hashing
             return _tempBlock;
         }
 
-        
+        /// <summary>
+        /// Metoda zapise blok do suboru. 
+        /// </summary>
+        /// <param name="adresaBloku"></param>
+        /// <param name="poleBytov"></param>
+        public void WriteBlok(int adresaBloku, Block block)
+        {
+            int odKial = adresaBloku*block.GetSize();
+            //zapisem dane byty na dany index
+            byte[] poleBytov = new byte[block.GetSize()];
+            poleBytov = block.ToByteArray();
+            _fileStream.WriteAsync(poleBytov, odKial, block.GetSize());
+        }
 
+        public int AlokujNovyBlock()
+        {
+            return _pocetBlockov++;
+        }
+        /// <summary>
+        /// Metoda zobrazi informacie neutriedeneho suboru. 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < _pocetBlockov; i++)
+            {
+                Block b = ReadBlok(i);
+                sb.AppendLine(b.ToString());
+            }
+            return sb.ToString();
+        }
     }
 }
