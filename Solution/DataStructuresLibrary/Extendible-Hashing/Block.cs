@@ -112,6 +112,10 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //velkost adresy 
             //aktualny pocet zaznamov
             BitConverter.GetBytes(PoleRecordov.Count).CopyTo(poleBytov, temp_index);
+            temp_index += 4;
+            BitConverter.GetBytes(Hlbka).CopyTo(poleBytov, temp_index);
+            temp_index += 4;
+
             //cely 
             foreach (var x in PoleRecordov)
             {
@@ -144,6 +148,8 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //pocet zaznamov, tkore nacitavam
             int pocetZaznamov = BitConverter.ToInt32(byteArray, temp_index);
             temp_index = 4;
+            Hlbka = BitConverter.ToInt32(byteArray, temp_index);
+            temp_index += 4;
             int i = 0;
 
             for (int j = 0; j < pocetZaznamov; j++)

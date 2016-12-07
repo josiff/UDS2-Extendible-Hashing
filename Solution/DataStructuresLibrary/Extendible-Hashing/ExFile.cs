@@ -11,10 +11,9 @@ namespace DataStructuresLibrary.Extendible_Hashing
     {
         private string _filename;
         private FileStream _fileStream;
-        private int _pocetBlockov;
+        public  int PocetBlockov { get; set; }
         private Record _record;
         private int _maxCount; //maximalny pocet recordov v bloku
-
         public ExFile(string filename, int maxCount,  Record record)
         {
             _filename = filename;
@@ -59,7 +58,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         public int AlokujNovyBlock()
         {
-            return _pocetBlockov++;
+            return PocetBlockov++;
         }
         /// <summary>
         /// Metoda zobrazi informacie neutriedeneho suboru. 
@@ -69,7 +68,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         {
             StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < _pocetBlockov; i++)
+            for (int i = 0; i < PocetBlockov; i++)
             {
                 Block b = ReadBlok(i);
                 sb.AppendLine(b.ToString());

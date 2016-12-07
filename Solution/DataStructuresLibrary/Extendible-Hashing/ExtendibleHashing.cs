@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Authentication.ExtendedProtection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,13 +22,13 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <summary>
         /// Hlbka Hesovacieho suboru  - D
         /// </summary>
-        public int HlbkaAdresara { get; set; }
+        public int HlbkaSuboru { get; set; }
 
         public int PocetBlokov { get; set; }
         public ExFile Subor { get; set; }
 
         public int VelkostZaznamu { get; set; }
-        public int MaxPocetZaznamovVBloku { get; set; }
+        public int MaxPocetZaznamovVBloku { get;private set; }
         private Record _tempRecord;
         #endregion
 
@@ -92,46 +93,99 @@ namespace DataStructuresLibrary.Extendible_Hashing
         {
             //Vkladanie do bloku b - Princip
             //Nedoslo k preplneniu => vlozi sa priamo
-            //Doslo k preplneniu, ale d<D 
-            //      => rozdel blok
-            //      => vloz zaznam
-            //      => uprav adresy (lokalne) bez zvacsenia adresara
-            //Doslo k prepleniu a d = D
-            //      => zdvojnasob adresar
-            //      => rozdel blok
-            //      => vloz zaznam 
-            //      => reorganizuj cely adresar
+          
+           
 
+            bool vlozene = false;
+            while (!vlozene)
+            {
+                //vypocitam hash
+                int hash = data.GetHash();
+                int indexvAdresari =   IndexSubAdresara(hash, HlbkaSuboru);
+                int adresaBlokuVSubore =  Adresar[indexvAdresari];
+                //nacitam blok
+                Block block = Subor.ReadBlok(adresaBlokuVSubore);
 
+                //ak je blok plny
+                if (block.JePlny())
+                {
+                    //ak hlbka bloku je rovnaka ako hlbka suboru
+                    //d == D
 
+                    if (block.Hlbka == HlbkaSuboru)
+                    {
+                        //Doslo k prepleniu a d = D
+                        //      => zdvojnasob adresar
+                        //      => rozdel blok
+                        //      => vloz zaznam 
+                        //      => reorganizuj cely adresar
+                        //zdvojnasob adresar
+                        List<int> ZdvojnasobAdresar = new List<int>(Adresar.Capacity*2);
+                        for (int i = 0; i < Adresar.Count; i++)
+                        {
+                            ZdvojnasobAdresar.Add(Adresar[i]);
+                            ZdvojnasobAdresar.Add(Adresar[i]);
+                        }
+                        Adresar = ZdvojnasobAdresar;
+                        HlbkaSuboru++;
+                        vlozene = false;
+                    }
+                    
+           
 
-
-            ////PSEOUDO
-            ////
-            ////Algoritmus vkladania
-            //// while niejevlozene do
-            
-            //// begin
-            //    //vypocitajHash               - ziskame adresu bloku
-            //        //if blokJePlny then 
-            //             //begin 
-            //                  //if hlbkaBloku = HlbkaSuboru then 
-            //                 //begin 
-            //                    //Zdvojnasob Adresar
-            //                //end
-            //                 //rozdelenieBloku    -split - vytvorenie noveho bloku
-            //            //end
-            //        //else
-            //     //begin 
-            //        //VlozZaznam         - ukoncenie cyklu uwhile
-            //     //end
-            ////end
+                    //rozdel blok
+                    //split 
+                    //vytvorenie 
+                    int hlbkanova = block.Hlbka + 1;
+                    Block novyBlock = new Block(MaxPocetZaznamovVBloku, hlbkanova, _tempRecord);
+                    
+                    for (int i = 0; i < block.PoleRecordov.Count; i++)
+                    {
+                        if (GetBitArrayFromHash(block.PoleRecordov[i].GetHash())[hlbkanova])
+                        {
+                            novyBlock.PridajRecord(block.PoleRecordov[i]);
+                            block.VymazRecord(block.PoleRecordov[i]);
+                        }
+                    }
+                    int adresaNovehoBloku =  Subor.AlokujNovyBlock();
+                    novyBlock.Hlbka = hlbkanova;
+                    block.Hlbka = hlbkanova;
+                    Subor.WriteBlok(adresaNovehoBloku, novyBlock);
+                    Subor.WriteBlok(adresaBlokuVSubore, block);
+                    Adresar.Add(adresaNovehoBloku);
+                    vlozene = false;
+                }
+                else
+                {
+                    //vloz zaznam
+                    block.PridajRecord(data);
+                    Subor.WriteBlok(adresaBlokuVSubore, block);
+                    vlozene = true;
+                }
+            }
             return false;
         }
 
+        private int IndexSubAdresara(int hash, int hlbka)
+        {
+            BitArray hassBitArray = new BitArray(BitConverter.GetBytes(hash));
+            //potrebujem urobit dekadicky tvar cisla 
+            int cislo = 0;
+            int exponent = 0;
+            for (int i = hlbka - 1; i >= 0; i--)
+            {
+                cislo += hassBitArray[i] ? 2 ^ (exponent)*1 : 0;
+                exponent++;
+            }
+            return cislo;
+        }
+        private BitArray GetBitArrayFromHash(int hash)
+        {
+           return new BitArray(BitConverter.GetBytes(hash));
+           }
         public override string ToString()
         {
-            return $"{nameof(Adresar)}: {Adresar}, {nameof(HlbkaAdresara)}: {HlbkaAdresara}, {nameof(PocetBlokov)}: {PocetBlokov}, {nameof(Subor)}: {Subor}, {nameof(VelkostZaznamu)}: {VelkostZaznamu}, {nameof(MaxPocetZaznamovVBloku)}: {MaxPocetZaznamovVBloku}";
+            return $"{nameof(Adresar)}: {Adresar}, {nameof(HlbkaSuboru)}: {HlbkaSuboru}, {nameof(PocetBlokov)}: {PocetBlokov}, {nameof(Subor)}: {Subor}, {nameof(VelkostZaznamu)}: {VelkostZaznamu}, {nameof(MaxPocetZaznamovVBloku)}: {MaxPocetZaznamovVBloku}";
         }
 
         /// <summary>
@@ -189,7 +243,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //miesta v subore, kde sa nachadza blok,ktory by mal 
             //obsahovat hladany zaznam
 
-            int index = BitConverter.ToInt32(I, HlbkaAdresara);
+            int index = BitConverter.ToInt32(I, HlbkaSuboru);
 
             Block Pi = null;
 
