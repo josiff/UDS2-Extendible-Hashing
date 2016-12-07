@@ -24,23 +24,26 @@ namespace DataStructuresLibrary.Extendible_Hashing
         public int HlbkaAdresara { get; set; }
 
         public int PocetBlokov { get; set; }
-        public FileStream _fileStream { get; set; }
-        public int VelkostZaznamu { get; set; }
-        public int PocetZaznamovVBloku { get; set; }
-    #endregion
+        public ExFile Subor { get; set; }
 
-        public ExtendibleHashing(string filename, int pocetZaznamovBloku)
+        public int VelkostZaznamu { get; set; }
+        public int MaxPocetZaznamovVBloku { get; set; }
+        private Record _tempRecord;
+        #endregion
+
+        public ExtendibleHashing(string filename, int maxPocetZaznamovBloku, Record record)
         {
             VelkostZaznamu = Activator.CreateInstance<T>().GetSize();
-            PocetZaznamovVBloku = pocetZaznamovBloku;
-            _fileStream = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            MaxPocetZaznamovVBloku = maxPocetZaznamovBloku;
+            _tempRecord = record;
+            Subor = new ExFile(filename, maxPocetZaznamovBloku, record);
         }
 
         /// <summary>
         /// Metoda zobrazi informacie hashovatelneho suboru. 
         /// </summary>
         /// <returns></returns>
-     
+
 
         #region Methods
         /// <summary>
@@ -99,44 +102,35 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //      => vloz zaznam 
             //      => reorganizuj cely adresar
 
-           
 
 
 
-            //PSEOUDO
-            //
-            //Algoritmus vkladania
-            // while niejevlozene do
-            // begin
-                //vypocitajHash               - ziskame adresu bloku
-                //if blokJePlny then 
-                    //begin 
-                        //if hlbkaBloku = HlbkaSuboru then 
-                            //begin 
-                                //Zdvojnasob Adresar
-                            //end
-                        //rozdelenieBloku    -split - vytvorenie noveho bloku
-                    //end
-               //else
-                    //begin 
-                        //VlozZaznam         - ukoncenie cyklu uwhile
-                    //end
-            //end
+
+            ////PSEOUDO
+            ////
+            ////Algoritmus vkladania
+            //// while niejevlozene do
+            //// begin
+            //    //vypocitajHash               - ziskame adresu bloku
+            //        //if blokJePlny then 
+            //             //begin 
+            //                  //if hlbkaBloku = HlbkaSuboru then 
+            //                 //begin 
+            //                    //Zdvojnasob Adresar
+            //                //end
+            //                 //rozdelenieBloku    -split - vytvorenie noveho bloku
+            //            //end
+            //        //else
+            //     //begin 
+            //        //VlozZaznam         - ukoncenie cyklu uwhile
+            //     //end
+            ////end
             return false;
         }
 
         public override string ToString()
         {
-            string s =$"{nameof(HlbkaAdresara)}: {HlbkaAdresara}," +
-                   $" {nameof(PocetBlokov)}: {PocetBlokov}," +
-               $" {nameof(VelkostZaznamu)}: {VelkostZaznamu}," +
-                   $" {nameof(PocetZaznamovVBloku)}: {PocetZaznamovVBloku}";
-            s += "\nObsahuje nasledujuce adresy: ";
-            foreach (var a in Adresar)
-            {
-                s += a + ", ";
-            }
-            return s;
+            return $"{nameof(Adresar)}: {Adresar}, {nameof(HlbkaAdresara)}: {HlbkaAdresara}, {nameof(PocetBlokov)}: {PocetBlokov}, {nameof(Subor)}: {Subor}, {nameof(VelkostZaznamu)}: {VelkostZaznamu}, {nameof(MaxPocetZaznamovVBloku)}: {MaxPocetZaznamovVBloku}";
         }
 
         /// <summary>
@@ -197,9 +191,9 @@ namespace DataStructuresLibrary.Extendible_Hashing
             int index = BitConverter.ToInt32(I, HlbkaAdresara);
 
             Block Pi = null;
-            
+
             //V bloku P[i] najdi zaznam s klucom K. 
-            bool found =false;
+            bool found = false;
             foreach (var x in Adresar)
             {
                 if (x == index)
@@ -215,14 +209,14 @@ namespace DataStructuresLibrary.Extendible_Hashing
             {
                 if (x.Key.Equals(index))
                 {
-                     return x;
+                    return x;
                 }
             }
-            
+
             return findRecord;
         }
         #endregion
-        
+
         public Block VyhladajBlock()
         {
             return default(Block);

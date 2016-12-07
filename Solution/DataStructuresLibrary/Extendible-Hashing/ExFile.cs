@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataStructuresLibrary.Extendible_Hashing
 {
-    class ExFile
+   public class ExFile
     {
         private string _filename;
         private FileStream _fileStream;
