@@ -41,12 +41,19 @@ namespace DataStructuresLibrary.Extendible_Hashing
         ///<summary>
         /// Konstruktor, ktory vytvori prazdny blok. 
         /// </summary>
-        public Block(int maximalnyPocetZaznamov, int hlbka, int velkostZaznamu, Record r)
+        public Block(int maximalnyPocetZaznamov, int hlbka, Record r)
         {
             MaximalnyPocetZaznamov = maximalnyPocetZaznamov;
             PoleRecordov = new List<Record>(maximalnyPocetZaznamov);
-            VelkostZaznamu = velkostZaznamu;
+            VelkostZaznamu = r.GetSize();
             Hlbka = hlbka;
+            _tempRecord = r;
+        }
+        public Block(int maximalnyPocetZaznamov, Record r)
+        {
+            MaximalnyPocetZaznamov = maximalnyPocetZaznamov;
+            PoleRecordov = new List<Record>(maximalnyPocetZaznamov);
+            VelkostZaznamu = r.GetSize();
             _tempRecord = r;
         }
         #endregion

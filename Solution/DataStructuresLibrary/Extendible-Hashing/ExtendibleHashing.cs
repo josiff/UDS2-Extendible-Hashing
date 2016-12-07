@@ -16,7 +16,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// Adresar - dynamicke pole celych cisel
         /// Obsahuju Blockn 
         /// </summary>
-        public int[] Adresar { get; set; }
+        public List<int> Adresar { get; set; }
 
         /// <summary>
         /// Hlbka Hesovacieho suboru  - D
@@ -34,7 +34,6 @@ namespace DataStructuresLibrary.Extendible_Hashing
             VelkostZaznamu = Activator.CreateInstance<T>().GetSize();
             PocetZaznamovVBloku = pocetZaznamovBloku;
             _fileStream = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            Adresar = new[] {0, 0};
         }
 
         /// <summary>

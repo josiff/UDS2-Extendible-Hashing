@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extendible-Hashing\Block.cs" />
+    <Compile Include="Extendible-Hashing\ExFile.cs" />
     <Compile Include="Extendible-Hashing\ExtendibleHashing.cs" />
     <Compile Include="Extendible-Hashing\Record.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
