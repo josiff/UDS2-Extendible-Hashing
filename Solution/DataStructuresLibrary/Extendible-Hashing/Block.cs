@@ -154,6 +154,10 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 if (x != null)
                 {
                     var array = x.ToByteArray(true);
+                    if (array.Length < velkostZaznamu)
+                    {
+                        array = Helper_Bytes._get_pom_pole(velkostZaznamu, array);
+                    }
                     Array.Copy(array, 0, poleBytov, temp_index, velkostZaznamu);
                     temp_index += velkostZaznamu;
                 }
