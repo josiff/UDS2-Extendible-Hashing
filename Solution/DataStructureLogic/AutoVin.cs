@@ -42,7 +42,7 @@ namespace DataStructureLogic
             throw new NotImplementedException();
         }
 
-        public override void FromByteArray(byte[] byteArray)
+        public override Record FromByteArray(byte[] byteArray)
         {
             throw new NotImplementedException();
         }

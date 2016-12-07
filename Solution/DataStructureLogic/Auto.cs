@@ -92,7 +92,7 @@ namespace DataStructureLogic
             VPatrani = vPatrani;
             KoniecPlatnostiSTK = koniecPlatnostiStk;
             KoniecPlatnostiEK = koniecPlatnostiEk;
-            IsValid = true;
+         
         }
 
         /// <summary>
@@ -108,29 +108,11 @@ namespace DataStructureLogic
             VPatrani = auto.VPatrani;
             KoniecPlatnostiSTK = auto.KoniecPlatnostiSTK;
             KoniecPlatnostiEK = auto.KoniecPlatnostiEK;
-            Key = auto.Key;
-            IsValid = auto.IsValid;
-
-
-        }
-
-        public Auto(string key)
-        {
-            Key = key;
-            IsValid = true;
-        }
-
-        public Auto()
-        {
-            IsValid = false;
-        }
-
+          }
         #endregion
 
 
         #region Override methods from Block
-
-
         /// <summary>
         /// Metoda, ktora vrati Hash code daneho zaznamu. 
         /// </summary>

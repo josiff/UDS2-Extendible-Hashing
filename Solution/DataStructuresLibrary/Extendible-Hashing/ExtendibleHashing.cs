@@ -208,10 +208,6 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
             foreach (var x in Pi.PoleRecordov)
             {
-                if (x.Key.Equals(index))
-                {
-                    return x;
-                }
             }
 
             return findRecord;

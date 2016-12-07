@@ -131,7 +131,7 @@ namespace DataStructureLogic
             return poleBytov;
 
         }
-        public override void FromByteArray(byte[] byteArray)
+        public override Record FromByteArray(byte[] byteArray)
         {
             int index = 0;
             MenoVodica = Encoding.UTF8.GetString(byteArray, index, _pocet_bajtov_meno_vodica).Trim('\0');
@@ -146,22 +146,16 @@ namespace DataStructureLogic
             ZakazViestVozidlo = BitConverter.ToBoolean(byteArray, index);
             index += _pocet_bajtov_zakaz_viest_vozidlo;
             DopravnePriestupky =  BitConverter.ToInt32(byteArray, index);
+            return new VodickyPreukaz(MenoVodica, PriezviskoVodica, EvidencneCisloPreukazu, UkonceniePlatnosti, ZakazViestVozidlo, DopravnePriestupky);
         }
 
         public override string ToString()
         {
-            string s = "\nEvidencne Cislo: " + EvidencneCisloPreukazu +"\nMeno a Priezvisko: " + MenoVodica + " " + PriezviskoVodica
+           return  "\nEvidencne Cislo: " + EvidencneCisloPreukazu +"\nMeno a Priezvisko: " + MenoVodica + " " + PriezviskoVodica
                 
                 + "\tUkoncenie Platnosti: " + UkonceniePlatnosti.ToShortDateString()
                 + "\t" + (ZakazViestVozidlo ? "POVOLENE" : "ZAKAZ") + " Viest Vozidlo \t " +
-                "Pocet dopravnych priestupkov: " + DopravnePriestupky;
-
-            s += "\tHash code: " + Key + "\tSize: " + GetSize() ;
-
-            return s;
+                "Pocet dopravnych priestupkov: " + DopravnePriestupky +"\tSize: " + GetSize() ;
         }
-
-
-
-    }
+     }
 }
