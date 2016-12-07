@@ -19,12 +19,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// Nevalidny - ak je vymazany, alebo jednoducho nie je validny. 
         /// </summary>
         public bool IsValid { get; set; }
-
-        /// <summary>
-        /// Adresa bloku s datami zaznamu
-        /// </summary>
-        public int Address { get; set; }
-
+        
         /// <summary>
         /// Kazdy zaznam obsahuje Hash Kluc. 
         /// </summary>
@@ -34,7 +29,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         #region Pomocne konstanty
         public const int _pocet_bytov_isvalid = 1;
         public const int _pocet_bytov_key = 4;
-        public int _pocet_bytov_address = 4;
+        public const int _pocet_bytov_address = 4;
         #endregion
 
         #region Abstraktne metody
@@ -45,30 +40,42 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// </summary>
         /// <returns>Velkost zazanmu.</returns>
         public abstract int GetSize();
+     
         /// <summary>
-        /// Abstraktna metoda, ktora vrati velkost Adressy. 
-        /// Vypocitana z poctu bytov- jeValidne + kluc + adresa 
-        /// </summary>
-        /// <returns></returns>
-        public abstract int GetAddressSize();
-
-        /// <summary>
-        /// Abstraktna metoda, ktora vrati Hash code daneho zaznamu. 
+        /// Metoda, ktora vrati Hash code daneho zaznamu. 
         /// </summary>
         /// <returns>Hash Code</returns>
-        public abstract int GetHash();
+        public int GetHash(string key)
+        {
+            int hashcode = 0;
+            int i = 0;
+            double j;
+            //prejdem kazdy chareakter v kluci
+            foreach (var c in key)
+            {
+                //ak je dlzka kluca vacsia ako jedna - nastavim pomocnu prementu na 3 alebo 3.5 inak 1
+                double pom1 = Key.Length > 7 ? 3 : 1;
+                double pom2 = Key.Length > 7 ? 3.5 : 1;
+                i++;
+                //konvertujem char na int
+                j = Convert.ToInt32(c) / 6.0;
+                //vypocitam pomocou funkcie hash code. 
+                hashcode += Convert.ToInt32(Math.Round(Math.Pow(j, i / pom1)) * i * 1.6 * pom1 * pom2);
+            }
+            return hashcode;
+        }
         //metody specificke pre record. 
         /// <summary>
         /// Abstraktna metoda, ktora spracuje/skonvertuje dany zaznam a vrati ho ako pole bytov. 
         /// </summary>
         /// <returns>Pole bytov - zaznam konvertovany do bytov.</returns>
-        public abstract byte[] ToByteArray(bool allData = true);
+        public abstract byte[] ToByteArray();
         /// <summary>
         ///Abstraktna Metoda naplni dany record datami z array bytov
         /// </summary>
         /// <param name="byteArray">Pole bytov<param>
         /// <param name="hasAdress">Ak ma platnu adresu.</param>
-        public abstract void FromByteArray(byte[] byteArray, bool hasAdress = true);
+        public abstract void FromByteArray(byte[] byteArray);
 
         //override defaultnych hodnot z rodica Object
         /// <summary>

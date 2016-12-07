@@ -8,22 +8,34 @@ using System.Threading.Tasks;
 
 namespace DataStructuresLibrary.Extendible_Hashing
 {
-    public class ExtendibleHashing
+    public class ExtendibleHashing<T> where T : Record
     {
         #region Property
+
         /// <summary>
         /// Adresar - dynamicke pole celych cisel
+        /// Obsahuju Blockn 
         /// </summary>
         public int[] Adresar { get; set; }
+
         /// <summary>
         /// Hlbka Hesovacieho suboru  - D
         /// </summary>
         public int HlbkaAdresara { get; set; }
-        
-        public FileStream Seek { get; set; }
 
-        #endregion
-        
+        public int PocetBlokov { get; set; }
+        public FileStream Seek { get; set; }
+        public int VelkostZaznamu { get; set; }
+        public int PocetZaznamovVBloku { get; set; }
+    #endregion
+
+        public ExtendibleHashing(string filename, int pocetZaznamovBloku)
+        {
+            VelkostZaznamu = Activator.CreateInstance<T>().GetSize();
+            PocetZaznamovVBloku = pocetZaznamovBloku;
+
+        }
+
         #region Methods
         /// <summary>
         /// Operacia Vloz.  

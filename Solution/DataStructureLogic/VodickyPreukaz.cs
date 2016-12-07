@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataStructuresLibrary.Extendible_Hashing;
+using DateStructureGeneral;
 
 namespace DataStructureLogic
 {
@@ -45,8 +47,6 @@ namespace DataStructureLogic
 
         private const int _pocet_bytov_dopravne_prieskumnik = 4;
 
-        public bool JePotrebnyPlnyVypis = true;
-
         #endregion
 
         #region Constructors
@@ -84,41 +84,12 @@ namespace DataStructureLogic
 
         #endregion
 
-        public override int GetHash()
-        {
-            int hashcode = 0;
-            int i = 0;
-            double j;
-            //prejdem kazdy chareakter v kluci
-            foreach (var c in Key)
-            {
-                //ak je dlzka kluca vacsia ako jedna - nastavim pomocnu prementu na 3 alebo 3.5 inak 1
-                double pom1 = Key.Length > 7 ? 3 : 1;
-                double pom2 = Key.Length > 7 ? 3.5 : 1;
-                i++;
-                //konvertujem char na int
-                j = Convert.ToInt32(c) / 6.0;
-                //vypocitam pomocou funkcie hash code. 
-                hashcode += Convert.ToInt32(Math.Round(Math.Pow(j, i / pom1)) * i * 1.6 * pom1 * pom2);
-            }
-
-            return hashcode;
-        }
-
-  
         public override int GetSize()
         {
             return _pocet_bytov_cislo_preukazu + _pocet_bytov_dopravne_prieskumnik + _pocet_bytov_meno_vodica
                           + _pocet_bytov_priezvisko + _pocet_bytov_ukoncenie_platnosti +
-                          _pocet_bytov_zakaz_viest_vozidlo
-                          + _pocet_bytov_address + _pocet_bytov_isvalid;
+                          _pocet_bytov_zakaz_viest_vozidlo;
         }
-
-        public override int GetAddressSize()
-        {
-            return _pocet_bytov_address + _pocet_bytov_isvalid + _pocet_bytov_key;
-        }
-
 
         public override bool Equals(object obj)
         {
@@ -140,14 +111,41 @@ namespace DataStructureLogic
             return false;
         }
 
-        public override byte[] ToByteArray(bool allData = true)
+        public override byte[] ToByteArray()
         {
-            throw new NotImplementedException();
-        }
+            //array bytov ktore vratim
+            byte[] poleBytov = new byte[GetSize()];
+            int index = 0;
+            //evidencne cislo
+            Helper_Bytes._get_pom_pole(_pocet_bytov_meno_vodica, Encoding.UTF8.GetBytes(MenoVodica)).CopyTo(poleBytov, index);
+            index += _pocet_bytov_meno_vodica;
+            Helper_Bytes._get_pom_pole(_pocet_bytov_priezvisko, Encoding.UTF8.GetBytes(PriezviskoVodica)).CopyTo(poleBytov, index);
+            index += _pocet_bytov_priezvisko;
+            BitConverter.GetBytes(EvidencneCisloPreukazu).CopyTo(poleBytov, index);
+            index += _pocet_bytov_cislo_preukazu;
+            Encoding.UTF8.GetBytes(UkonceniePlatnosti.ToString("dd.MM.yyyy")).CopyTo(poleBytov, index);
+            index += _pocet_bytov_ukoncenie_platnosti;
+            BitConverter.GetBytes(ZakazViestVozidlo).CopyTo(poleBytov, index);
+            index += _pocet_bytov_zakaz_viest_vozidlo;
+            BitConverter.GetBytes(DopravnePriestupky).CopyTo(poleBytov, index);
+            return poleBytov;
 
-        public override void FromByteArray(byte[] byteArray, bool hasAdress = true)
+        }
+        public override void FromByteArray(byte[] byteArray)
         {
-            throw new NotImplementedException();
+            int index = 0;
+            MenoVodica = Encoding.UTF8.GetString(byteArray, index, _pocet_bytov_meno_vodica).Trim('\0');
+            index += _pocet_bytov_meno_vodica;
+            PriezviskoVodica = Encoding.UTF8.GetString(byteArray, index, _pocet_bytov_priezvisko).Trim('\0');
+            index += _pocet_bytov_priezvisko;
+            EvidencneCisloPreukazu = BitConverter.ToInt32(byteArray, index);
+            index += _pocet_bytov_cislo_preukazu;
+            UkonceniePlatnosti =
+            DateTime.ParseExact(Encoding.UTF8.GetString(byteArray, index, _pocet_bytov_ukoncenie_platnosti), "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            index += _pocet_bytov_ukoncenie_platnosti;
+            ZakazViestVozidlo = BitConverter.ToBoolean(byteArray, index);
+            index += _pocet_bytov_zakaz_viest_vozidlo;
+            DopravnePriestupky =  BitConverter.ToInt32(byteArray, index);
         }
 
         public override string ToString()
@@ -158,17 +156,9 @@ namespace DataStructureLogic
                 + "\t" + (ZakazViestVozidlo ? "POVOLENE" : "ZAKAZ") + " Viest Vozidlo \t " +
                 "Pocet dopravnych priestupkov: " + DopravnePriestupky;
 
-            string s2 = "\nAdresa: " + Address + "\tHash code: " + Key + "\tSize: " + GetSize() + "\tAddress Size: " +
-                GetAddressSize();
+            s += "\tHash code: " + Key + "\tSize: " + GetSize() ;
 
-            if (JePotrebnyPlnyVypis)
-            {
-                return s + s2;
-            }
-            else
-            {
-                return s2;
-            }
+            return s;
         }
 
 
