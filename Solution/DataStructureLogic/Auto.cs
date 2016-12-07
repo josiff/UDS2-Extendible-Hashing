@@ -169,16 +169,9 @@ namespace DataStructureLogic
                        "\nPocet naprav: " + PocetNaprav + "\tPrevadzkova hmotnost: " + PrevadzkovaHmotnost
                        + "\tV patrani: " + ((VPatrani) ? "ANO" : "NIE")
                        + "\tKoniec platnosti STK: " + KoniecPlatnostiSTK.ToShortDateString()
-                       + "\tKoniec platnosti EK: " + KoniecPlatnostiEK.ToShortDateString();
-            string s2 = "\nHash code: " + Key + "\tSize: " + GetSize();
-            if (JePotrebnyPlnyVypis)
-            {
-                return s + s2;
-            }
-            else
-            {
-                return s2;
-            }
+                       + "\tKoniec platnosti EK: " + KoniecPlatnostiEK.ToShortDateString()
+         +  "\tSize: " + GetSize();
+            return s;
         }
 
         public override bool Equals(object obj)
@@ -221,7 +214,7 @@ namespace DataStructureLogic
             return poleBytov;
 
         }
-        public override void FromByteArray(byte[] byteArray)
+        public override Record FromByteArray(byte[] byteArray)
         {
             int temp_index = 0;
                 //evidencne cislo 
@@ -242,6 +235,7 @@ namespace DataStructureLogic
                 //koniec platnosti stk
                 KoniecPlatnostiSTK =
                 DateTime.ParseExact(Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bajtov_datum_stk), "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            return new Auto(EvidencneCisloVozidla, VinCislo, PocetNaprav, PrevadzkovaHmotnost, VPatrani, KoniecPlatnostiSTK, KoniecPlatnostiEK);
         }
         #endregion
     }

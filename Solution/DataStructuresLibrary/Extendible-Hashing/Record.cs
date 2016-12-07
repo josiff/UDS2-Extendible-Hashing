@@ -34,7 +34,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// </summary>
         /// <param name="byteArray">Pole bytov<param>
         /// <param name="hasAdress">Ak ma platnu adresu.</param>
-        public abstract void FromByteArray(byte[] byteArray);
+        public abstract Record FromByteArray(byte[] byteArray);
 
         //override defaultnych hodnot z rodica Object
         /// <summary>

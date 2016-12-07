@@ -28,51 +28,30 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <summary>
         /// Pocet zaznamov, ktore obsahuje blok. 
         /// </summary>
-        public int PocetZaznamov { get; set; }
-        /// <summary>
-        /// Pocet Platnych zaznamov v bloku
-        /// </summary>
-        public int PocetPlatnych { get; set; }
-     
+        public int MaximalnyPocetZaznamov { get; set; }
         /// <summary>
         /// Velkost bloku v bytoch. 
         /// </summary>
         public static int VelkostZaznamu { get; set; }
 
+        private Record _tempRecord;
         #endregion
 
         #region Konstruktor
         ///<summary>
         /// Konstruktor, ktory vytvori prazdny blok. 
         /// </summary>
-        public Block(int pocetZaznamov, int hlbka, int velkostZaznamu)
+        public Block(int maximalnyPocetZaznamov, int hlbka, int velkostZaznamu, Record r)
         {
-            PocetZaznamov = pocetZaznamov;
-            PocetPlatnych = 0;
-            PoleRecordov = new Record[pocetZaznamov];
+            MaximalnyPocetZaznamov = maximalnyPocetZaznamov;
+            PoleRecordov = new List<Record>(maximalnyPocetZaznamov);
             VelkostZaznamu = velkostZaznamu;
+            Hlbka = hlbka;
+            _tempRecord = r;
         }
-        /// <summary>
-        /// Copy konstruktor Bloku
-        /// </summary>
-        /// <param name="block"></param>
-        public Block(Block block)
-        {
-            Hlbka = block.Hlbka;
-            PocetPlatnych = block.PocetPlatnych;
-            PocetZaznamov = block.PocetZaznamov;
-            PoleRecordov = block.PoleRecordov;
-        }
-
         #endregion
 
         #region Overriden methods
-        /*   public bool Equals(object obj)
-           {
-               return false;
-           }
-
-       */
         /// <summary>
         /// METODA vypise vsetky informacie o bloku
         /// </summary>
@@ -99,7 +78,6 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         #region Metody - ToByteArray, FromByteArray
 
-        private int velkostZaznamu = 0;
         /// <summary>
         /// Vrati velkost bloku v bytoch
         /// Vypocitam ako - velkost jedneho zaznamu a ten vynasobim poctom zaznamov. 
@@ -107,9 +85,9 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <returns></returns>
         public int GetSize()
         {
-            return VelkostZaznamu;
+            return VelkostZaznamu * MaximalnyPocetZaznamov + 4 + 4;
         }
-   
+
 
         /// <summary>
         /// Metoda ktora mi skonvertuje blok dat do array bytov.
@@ -119,31 +97,23 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <returns>>Blok skonvertovany do pole bytov</returns>
         public byte[] ToByteArray()
         {
-            velkostZaznamu = PoleRecordov[0].GetSize();
             //v tejto premenej bude blok skonvertovany na byty
             byte[] poleBytov = new byte[GetSize()];
             //skonvertujem Kazdy prvok v poli zaznamov na byty a pridam ich do pola bytov. 
 
             int temp_index = 0;//pomocna premena na zistenie na ktorom indexe mam zapisat zaznam.
             //velkost adresy 
-
+            //aktualny pocet zaznamov
+            BitConverter.GetBytes(PoleRecordov.Count).CopyTo(poleBytov, temp_index);
+            //cely 
             foreach (var x in PoleRecordov)
             {
                 if (x != null)
                 {
                     var array = x.ToByteArray();
-                    if (array.Length < velkostZaznamu)
-                    {
-                        array = Helper_Bytes._get_pom_pole(velkostZaznamu, array);
-                    }
-                    Array.Copy(array, 0, poleBytov, temp_index, velkostZaznamu);
-                    temp_index += velkostZaznamu;
+                    Array.Copy(array, 0, poleBytov, temp_index, VelkostZaznamu);
+                    temp_index += VelkostZaznamu;
                 }
-                else
-                {
-                    Helper_Bytes._get_pom_pole(velkostZaznamu, new byte[0]);
-                }
-
             }
             return poleBytov;
         }
@@ -163,36 +133,22 @@ namespace DataStructuresLibrary.Extendible_Hashing
             int temp_index = 0;
             //adresa prveho
             //pomocne pole bytov
-            byte[] temp = new byte[PoleRecordov[0].GetSize()];
-            //premena na pomoc s indexom pri kopirovani arrayov bytov. 
-           
-            
+            byte[] temp = new byte[GetSize()];
+            //pocet zaznamov, tkore nacitavam
+            int pocetZaznamov = BitConverter.ToInt32(byteArray, temp_index);
+            temp_index = 4;
             int i = 0;
-            foreach (var x in PoleRecordov)
+
+            for (int j = 0; j < pocetZaznamov; j++)
             {
-                if (x != null)
-                {
-                    if (byteArray.Length < x.GetSize())
-                    {
-                        byteArray = Helper_Bytes._get_pom_pole(x.GetSize(), byteArray);
-                    }
-                  Array.Copy(temp, temp_index, byteArray, 0,  x.GetSize());
-                        temp_index += x.GetSize();
-                    
-                    //pridam novy record z pomocnych bytov
-                    x.FromByteArray(temp);
-                }
-                else
-                {
-                    byteArray = Helper_Bytes._get_pom_pole(PoleRecordov[0].GetSize(), byteArray);
-
-                }
-
+                byte[] pomBytes = new byte[VelkostZaznamu];
+                byteArray.CopyTo(pomBytes, temp_index);
+                temp_index += VelkostZaznamu;
+                //pridam novy record vytvorenych z danych bytov. 
+                PoleRecordov.Add(_tempRecord.FromByteArray(pomBytes));
             }
         }
-
         #endregion
-
 
         #region Metody - na pracu s polom zaznamov - pridaj, najdi, vymaz. 
         /// <summary>
@@ -200,24 +156,11 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// </summary>
         /// <param name="record">Zaznam ktory chcem pridat. </param>
         /// <returns>Hodnotu adresy, kde bol pridany zaznam. </returns>
-        public int PridajRecord(Record record)
+        public bool PridajRecord(Record record)
         {
-            //ak pridavam prvy record, tak tam nastavim aj adresu prveho recordu. 
-            if ( PocetPlatnych == 0)
-            {
-                PoleRecordov[0] = record;
-                PocetPlatnych++;
-                return 0;
-            }
-            for (int i = 0; i < PocetZaznamov; i++)
-            {
-                    PoleRecordov[i] = record;
-                    PocetPlatnych++;
-                    return i;
-               
-            }
-            //nebol pridany, pretoze uz tam nie su ziadne volne bloky. 
-            return -1;
+            if (JePlny()) return false;
+            else PoleRecordov.Add(record);
+            return true;
         }
         /// <summary>
         /// Metoda najde dany record v bloku. 
@@ -231,18 +174,17 @@ namespace DataStructuresLibrary.Extendible_Hashing
             {
                 if (x != null)
                 {
-                    //ak je record validny 
                     //a je rovnaky s danym recordom,
                     //tak ho vratim, inak pokracujem dalej. 
-                    if (x.IsValid && x.Equals(zaznam))
+                    if (x.Equals(zaznam))
                     {
                         return x;
-                    }}
-              
+                    }
+                }
             }
-            //record sa nenasiel :( 
+            //record sa nenasiel 
             //vratim null object, resp. defaultny
-            return default(Record);
+            return null;
         }
         /// <summary>
         /// Metoda vymaze zadany record z bloku. 
@@ -251,37 +193,12 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <param name="record">Record ktory chcem vymazat. </param>
         public void VymazRecord(Record record)
         {
-            foreach (var x in PoleRecordov)
-            {
-                if (x.Equals(record))
-                {
-                    x.IsValid = false;
-                    PocetPlatnych--;
-                    break;
-                }
-            }
+            PoleRecordov.Remove(record);
         }
-
         #endregion
 
         #region Dalsie metody
-        /// <summary>
-        /// Metoda vycisti blok. 
-        /// Oznaci vsetky zaznamy ako nevalidne. 
-        /// </summary>
-        public void VycistiBlok()
-        {
-            foreach (var x in PoleRecordov)
-            {
-                if (x != null)
-                {
-                    x.IsValid = false;
-                    PocetPlatnych--;
-                }
-
-            }
-        }
-        /// <summary>
+    /// <summary>
         /// Metoda zisti ci je blok plny. 
         /// </summary>
         /// <returns>Hodnota vyjadrujuca ci je blok plny alebo nie. </returns>
@@ -289,20 +206,10 @@ namespace DataStructuresLibrary.Extendible_Hashing
         {
             //vypocitam ho ako rozdiel medzi poctom zaznamou a poctom platnych, ak su tieto dva cisla rovnake, 
             //tak to znamena, ze blok je plny. 
-            return (PocetZaznamov == PocetPlatnych);
+            return (MaximalnyPocetZaznamov == PoleRecordov.Count);
         }
 
-        public bool JePlnyCezCyklus()
-        {
-            foreach (var x in PoleRecordov)
-            {
-                if (!x.IsValid)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+
         /// <summary>
         /// Metoda zisti ci je nejake volne miesto pre nejaky zaznam v bloku. 
         /// </summary>
@@ -310,20 +217,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         public int VolneMiesto()
         {
             //zistim ho odpocitanim poctom zaznamov od poctom platnych
-            return PocetZaznamov - PocetPlatnych;
-        }
-
-        public int VolneMiestoCezCyklus()
-        {
-            int pocetVolnych = 0;
-            foreach (var x in PoleRecordov)
-            {
-                if (!x.IsValid)
-                {
-                    pocetVolnych++;
-                }
-            }
-            return pocetVolnych;
+            return MaximalnyPocetZaznamov - PoleRecordov.Count;
         }
         /// <summary>
         /// Metoda zisti ci blok je prazdny. 
@@ -331,25 +225,9 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <returns></returns>
         public bool JePrazdny()
         {
-            return PocetPlatnych == 0;
+            return PoleRecordov.Count == 0;
         }
-
-        public bool JePrazdnyCezCyklus()
-        {
-            foreach (var x in PoleRecordov)
-            {
-                if (x.IsValid)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
         #endregion
-
-
-
-
+        
     }
 }
