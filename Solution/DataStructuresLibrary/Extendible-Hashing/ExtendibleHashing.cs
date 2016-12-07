@@ -110,6 +110,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
             ////
             ////Algoritmus vkladania
             //// while niejevlozene do
+            
             //// begin
             //    //vypocitajHash               - ziskame adresu bloku
             //        //if blokJePlny then 
