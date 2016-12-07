@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -54,6 +55,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
             MaximalnyPocetZaznamov = maximalnyPocetZaznamov;
             PoleRecordov = new List<Record>(maximalnyPocetZaznamov);
             VelkostZaznamu = r.GetSize();
+            Hlbka = 1;
             _tempRecord = r;
         }
         #endregion
@@ -111,9 +113,10 @@ namespace DataStructuresLibrary.Extendible_Hashing
             int temp_index = 0;//pomocna premena na zistenie na ktorom indexe mam zapisat zaznam.
             //velkost adresy 
             //aktualny pocet zaznamov
-            BitConverter.GetBytes(PoleRecordov.Count).CopyTo(poleBytov, temp_index);
+            Array.Copy(BitConverter.GetBytes((Int32)PoleRecordov.Count), 0, poleBytov, 0, 4);
             temp_index += 4;
-            BitConverter.GetBytes(Hlbka).CopyTo(poleBytov, temp_index);
+            Array.Copy(BitConverter.GetBytes((Int32)Hlbka), 0, poleBytov, 4, 4);
+
             temp_index += 4;
 
             //cely 
@@ -137,28 +140,33 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <param name="hasAdress"></param>
         public void FromByteArray(byte[] byteArray)
         {
-            if (PoleRecordov[0] == null)
-            {
-                return;
-            }
             int temp_index = 0;
             //adresa prveho
             //pomocne pole bytov
             byte[] temp = new byte[GetSize()];
             //pocet zaznamov, tkore nacitavam
-            int pocetZaznamov = BitConverter.ToInt32(byteArray, temp_index);
+            byte[] pomB = new byte[4];
+            Array.Copy(byteArray, pomB,4);
+            int pocetZaznamov = BitConverter.ToInt32(pomB, 0);
             temp_index = 4;
-            Hlbka = BitConverter.ToInt32(byteArray, temp_index);
+            pomB = new byte[4];
+            Array.Copy(byteArray, temp_index, pomB, 0, 4);
+            Hlbka = BitConverter.ToInt32(pomB, 0);
             temp_index += 4;
+
             int i = 0;
 
             for (int j = 0; j < pocetZaznamov; j++)
             {
-                byte[] pomBytes = new byte[VelkostZaznamu];
-                byteArray.CopyTo(pomBytes, temp_index);
-                temp_index += VelkostZaznamu;
-                //pridam novy record vytvorenych z danych bytov. 
-                PoleRecordov.Add(_tempRecord.FromByteArray(pomBytes));
+               // if (byteArray.Length > temp_index)
+                {
+                    byte[] pomBytes = new byte[VelkostZaznamu];
+                    Array.Copy(byteArray, temp_index, pomBytes, 0, VelkostZaznamu);
+                    temp_index += VelkostZaznamu;
+                    //pridam novy record vytvorenych z danych bytov. 
+                    PoleRecordov.Add(_tempRecord.FromByteArray(pomBytes));
+                }
+                
             }
         }
         #endregion

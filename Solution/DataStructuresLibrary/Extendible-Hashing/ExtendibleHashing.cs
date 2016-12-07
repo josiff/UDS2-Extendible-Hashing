@@ -32,12 +32,14 @@ namespace DataStructuresLibrary.Extendible_Hashing
         private Record _tempRecord;
         #endregion
 
-        public ExtendibleHashing(string filename, int maxPocetZaznamovBloku, Record record)
+        public ExtendibleHashing(string filename, int maxPocetZaznamovBloku, Record record, bool createNew = false)
         {
-            VelkostZaznamu = Activator.CreateInstance<T>().GetSize();
+            VelkostZaznamu = record.GetSize();
             MaxPocetZaznamovVBloku = maxPocetZaznamovBloku;
             _tempRecord = record;
-            Subor = new ExFile(filename, maxPocetZaznamovBloku, record);
+            Subor = new ExFile(filename, maxPocetZaznamovBloku, record, createNew);
+            Adresar = new List<int>(maxPocetZaznamovBloku);
+            Adresar.Add(-1);
         }
 
         /// <summary>
@@ -91,9 +93,6 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// <returns></returns>
         public bool Insert(Record data)
         {
-            //Vkladanie do bloku b - Princip
-            //Nedoslo k preplneniu => vlozi sa priamo
-          
             bool vlozene = false;
             while (!vlozene)
             {
@@ -101,11 +100,24 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 int hash = data.GetHash();
                 int indexvAdresari =   IndexSubAdresara(hash, HlbkaSuboru);
                 int adresaBlokuVSubore =  Adresar[indexvAdresari];
+                if (adresaBlokuVSubore == -1)
+                {
+                    int adresaNovehoBloku = Subor.AlokujNovyBlock();
+                    Block novyBlock = new Block(MaxPocetZaznamovVBloku, 1, _tempRecord);
+                    novyBlock.PridajRecord(data);
+                    Adresar[indexvAdresari] = adresaNovehoBloku;
+
+                    PocetBlokov++;
+                    Subor.WriteBlok(adresaNovehoBloku, novyBlock);
+                    adresaBlokuVSubore = adresaNovehoBloku;
+                    vlozene = true;
+                    return true;
+                }
                 //nacitam blok
                 Block block = Subor.ReadBlok(adresaBlokuVSubore);
 
                 //ak je blok plny
-                if (block.JePlny())
+                if (block.JePlny() )
                 {
                     //ak hlbka bloku je rovnaka ako hlbka suboru
                     //d == D
@@ -126,6 +138,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
                         }
                         Adresar = ZdvojnasobAdresar;
                         HlbkaSuboru++;
+
                         vlozene = false;
                     }
                     
@@ -144,6 +157,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
                         }
                     }
                     int adresaNovehoBloku =  Subor.AlokujNovyBlock();
+                    PocetBlokov++;
                     novyBlock.Hlbka = hlbkanova;
                     block.Hlbka = hlbkanova;
                     Subor.WriteBlok(adresaNovehoBloku, novyBlock);
@@ -159,7 +173,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
                     vlozene = true;
                 }
             }
-            return false;
+            return vlozene;
         }
 
         private int IndexSubAdresara(int hash, int hlbka)
@@ -181,8 +195,37 @@ namespace DataStructuresLibrary.Extendible_Hashing
            }
         public override string ToString()
         {
-            return $"{nameof(Adresar)}: {Adresar}, {nameof(HlbkaSuboru)}: {HlbkaSuboru}, {nameof(PocetBlokov)}: {PocetBlokov}, {nameof(Subor)}: {Subor}, {nameof(VelkostZaznamu)}: {VelkostZaznamu}, {nameof(MaxPocetZaznamovVBloku)}: {MaxPocetZaznamovVBloku}";
-        }
+           string s = $"{nameof(HlbkaSuboru)}: {HlbkaSuboru}, {nameof(PocetBlokov)}: {PocetBlokov}, {nameof(VelkostZaznamu)}: {VelkostZaznamu}, {nameof(MaxPocetZaznamovVBloku)}: {MaxPocetZaznamovVBloku}";
+            StringBuilder sb = new StringBuilder();
+            //vypisem jednotlive bloky
+            //prechadzam vsetky bloky a postupne ich citam zo suboru. 
+            s += "\nAdresar: ";
+            //for (int i = 0; i < PocetBlokov; i++)
+            //{
+            //   //Block _prvyBlock = Subor.ReadBlok(i);
+            //   // sb.AppendLine("Blok " + i + "\t" + _prvyBlock.ToString());
+            //    s += Adresar[i] + ", ";
+            //}
+            foreach (var a in Adresar)
+            {
+                s += a + ", ";
+            }
+            int i = 1;
+            foreach (var adresa in Adresar)
+            {
+                if (adresa != -1)
+                {
+                    Block b = Subor.ReadBlok(adresa);
+                    sb.AppendLine("Block c: " + (i++));
+                    sb.AppendLine(b.ToString());
+
+                }
+                
+            }
+           
+            return s +sb.ToString();
+       
+    }
 
         /// <summary>
         /// Operacia Vymaz

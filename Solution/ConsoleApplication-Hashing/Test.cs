@@ -5,14 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataStructuresLibrary.Extendible_Hashing;
+using DateStructureGeneral;
 
 namespace ConsoleApplication_Hashing
 {
     public class Test : Record
     {
-        public int Number { get; set; }
+        public string Number { get; set; }
        
-        public Test(int number)
+        public Test(string number)
         {
             Number = number;
         }
@@ -22,14 +23,21 @@ namespace ConsoleApplication_Hashing
             return "" + Number;
         }
 
-        public override byte[] ToByteArray()
+        public override int GetHash()
         {
-            return BitConverter.GetBytes(Number);
+            return Number.GetHashCode();
         }
 
-        public override void FromByteArray(byte[] byteArray)
+        public override byte[] ToByteArray()
         {
-            Number = BitConverter.ToInt32(byteArray, 0);
+            return Helper_Bytes._get_pom_pole(10, Encoding.UTF8.GetBytes(Number));
+            ;
+        }
+
+        public override Record FromByteArray(byte[] byteArray)
+        {
+             Number = Encoding.UTF8.GetString(byteArray, 0, 10).Trim('\0');
+       return new Test(Number);
         }
 
         public override bool Equals(object obj)
@@ -40,7 +48,7 @@ namespace ConsoleApplication_Hashing
         
         public override int GetSize()
         {
-            return 4;
+            return 10;
         }
       }
 

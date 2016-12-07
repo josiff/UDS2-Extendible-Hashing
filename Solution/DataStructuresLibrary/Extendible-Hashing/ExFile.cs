@@ -14,12 +14,12 @@ namespace DataStructuresLibrary.Extendible_Hashing
         public  int PocetBlockov { get; set; }
         private Record _record;
         private int _maxCount; //maximalny pocet recordov v bloku
-        public ExFile(string filename, int maxCount,  Record record)
+        public ExFile(string filename, int maxCount,  Record record, bool createNew = false)
         {
             _filename = filename;
             _maxCount = maxCount;
             _record = record;
-            _fileStream = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            _fileStream = new FileStream(filename, (createNew ? FileMode.OpenOrCreate : FileMode.Open) , FileAccess.ReadWrite, FileShare.ReadWrite);
         }
 
         public Block ReadBlok(int adresa)
@@ -33,9 +33,10 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //je to index od ktoreho budem seekovat.
             int temp = _tempBlock.GetSize();
             //seeknem na dany index
-            _fileStream.Seek(adresa * temp, SeekOrigin.Begin);
+            int offset = (adresa == 0 || adresa == -1)?0: temp*adresa-temp;
+           _fileStream.Seek(offset, SeekOrigin.Begin);
             //precitam dane byty zo suboru
-            _fileStream.Read(poleBytov, 0, temp);
+            _fileStream.Read(poleBytov, offset, temp);
             //nastavim blok z danych dat. 
             _tempBlock.FromByteArray(poleBytov);
             //vratim blok ktory som precitala.
@@ -53,7 +54,8 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //zapisem dane byty na dany index
             byte[] poleBytov = new byte[block.GetSize()];
             poleBytov = block.ToByteArray();
-            _fileStream.WriteAsync(poleBytov, odKial, block.GetSize());
+         ///   _fileStream.Seek(odKial, SeekOrigin.Begin);
+            _fileStream.Write(poleBytov, odKial, block.GetSize());
         }
 
         public int AlokujNovyBlock()
@@ -71,6 +73,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
             for (int i = 0; i < PocetBlockov; i++)
             {
                 Block b = ReadBlok(i);
+                sb.AppendLine("Block c: " + (i + 1));
                 sb.AppendLine(b.ToString());
             }
             return sb.ToString();
