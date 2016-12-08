@@ -86,7 +86,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 //nacitam blok zo suboru - na zadanej adrese. 
                 Block block = Subor.ReadBlok(adresaBloku);
                 
-               // Console.WriteLine("Index v adresari: " + index + ", z hash funkcie: "+ data.GetHash() + ", hlbka suboru: " + HlbkaSuboru + ", hlbka bloku: " + block.Hlbka);
+                Console.WriteLine("Index v adresari: " + index + ", z hash funkcie: "+ data.GetHash() + ", hlbka suboru: " + HlbkaSuboru + ", hlbka bloku: " + block.Hlbka);
 
                 // 1. Ak sa blok preplni
                 //     => nebuduj skupinu preplnujucich blokov, namiesto toho 
@@ -158,12 +158,19 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
             //prerozdelenie adries v adresari, aby ukazovali na nove bloky spravne. 
             int rozdielBlokov = maxAdresa - minAdresa;
+           
             double vysledok = (double) rozdielBlokov/2;
             int vysled = (int) Math.Ceiling(vysledok);
+            Console.WriteLine("min : " + minAdresa + ", max: " + maxAdresa + "rozdiel: " + vysledok + " zaokruhlene: " + vysled);
+            Console.WriteLine("zmenene nasledovne adresy: ");
             for (int i = vysled + minAdresa; i <= maxAdresa; i++)
             {
+                Console.Write( i +"-" + Adresar[i]+"=>");
                 Adresar[i] = adresaNovehoBloku;
+                Console.Write(Adresar[i] + ", ");
+
             }
+            Console.WriteLine();
         }
 
         /// <summary>
@@ -189,17 +196,18 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
             BitArray hassBitArray = new BitArray(BitConverter.GetBytes(data.GetHash()));
             //potrebujem urobit dekadicky tvar cisla 
-           
-            int exponent = novaHlbka ;
-            for (int i = 0; i< novaHlbka; i++)
+
+            int exponent = novaHlbka;
+            for (int i = 0; i < novaHlbka; i++)
             {
                 if (i < aktualnaHlbkaSubor)
                 {
-                    min += hassBitArray[i] ? 2 ^ (exponent) *1  : 0;
+                    min += hassBitArray[i] ? 2 ^ (exponent) * 1 : 0;
                 }
-              exponent--;
+
+                exponent--;
             }
-            
+
             return min;
         }
         private int MaxIndexPrerozdelenia(int aktualnaHlbkaSubor, int novaHlbka, Record data)
