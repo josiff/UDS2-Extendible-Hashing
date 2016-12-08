@@ -163,7 +163,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
             int vysled = (int) Math.Ceiling(vysledok);
             Console.WriteLine("min : " + minAdresa + ", max: " + maxAdresa + "rozdiel: " + vysledok + " zaokruhlene: " + vysled);
             Console.WriteLine("zmenene nasledovne adresy: ");
-            for (int i = vysled + minAdresa; i <= maxAdresa; i++)
+            for (int i = vysled + minAdresa; i <=  maxAdresa; i++)
             {
                 Console.Write( i +"-" + Adresar[i]+"=>");
                 Adresar[i] = adresaNovehoBloku;
@@ -237,8 +237,9 @@ namespace DataStructuresLibrary.Extendible_Hashing
         private int IndexSubAdresara(int hash, int hlbka)
         {
             //32 bitove cislo
-            //napr. 1010 0101 0101 0010 10....
-            BitArray hassBitArray = new BitArray(BitConverter.GetBytes(hash));
+            byte[] cislo = BitConverter.GetBytes((Int16) hash);
+           //napr. 1010 0101 0101 0010 10....
+            BitArray hassBitArray = new BitArray(cislo);
            // Console.WriteLine();
             //Console.Write("Hlbka: " + hlbka + ", prevod hash do binarneho:\t");
             //potrebujem previest prvych par bitov na dekadicke cislo

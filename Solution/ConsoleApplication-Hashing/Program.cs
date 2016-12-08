@@ -59,13 +59,25 @@ namespace ConsoleApplication_Hashing
             }
             Console.WriteLine("Stav suboru po vlozeni 10 zaznamov.");
             Console.WriteLine(hashovanie.ToString());
-            
 
+            mesto = new Test(mesta[10]);
+            hashovanie.Insert(mesto);
 
+            mesto = new Test(mesta[11]);
+            hashovanie.Insert(mesto);
+            Console.WriteLine("Stav suboru po vlozeni 2 zaznamov. Zvolen a Presov");
+            Console.WriteLine(hashovanie.ToString());
 
-
-
-
+            mesto = new Test(mesta[12]);
+            hashovanie.Insert(mesto);
+            Console.WriteLine("Stav suboru po vlozeni Puchov. ");
+            Console.WriteLine(hashovanie.ToString());
+            mesto = new Test(mesta[13]);
+            hashovanie.Insert(mesto);
+            mesto = new Test(mesta[14]);
+            hashovanie.Insert(mesto);
+            Console.WriteLine("Stav suboru po vlozeni Ilava a Brezno. ");
+            Console.WriteLine(hashovanie.ToString());
 
 
 
@@ -74,7 +86,7 @@ namespace ConsoleApplication_Hashing
             //Test auto = new Test("test ");
 
             //ExtendibleHashing<Test> hashing2 = new ExtendibleHashing<Test>("test"+rand.Next(999)+"_file.txt",5, auto, true);
-           
+
             //Block block = new Block(40, 0, auto);
             //for (int i = 0; i < 20; i++)
             //{
@@ -91,7 +103,7 @@ namespace ConsoleApplication_Hashing
 
             //Console.WriteLine("Najdi recordy: ");
             //Test kluc;
-            
+
             //for (int i = 0; i < 20; i++)
             //{
             //    kluc = new Test("test " + i);
@@ -104,9 +116,9 @@ namespace ConsoleApplication_Hashing
             //    {
             //        Console.WriteLine("ZAZNAM SA NENASIEL!!!");
             //    }
-               
+
             //}
-            
+
 
             //Record r = new Test("prvy rec");
             //Record r1 = new Test("druhy1322");
@@ -118,7 +130,7 @@ namespace ConsoleApplication_Hashing
             //ExtendibleHashing<Test> hashing = new ExtendibleHashing<Test>(filename, 1, r, true);
             //Console.WriteLine("Pred Vkladanim");
             //Console.WriteLine(hashing.ToString());
-            
+
             //hashing.Insert(r);
             //Console.WriteLine("Vlozenie jedneho zaznamu. ");
             //Console.WriteLine(hashing.ToString());

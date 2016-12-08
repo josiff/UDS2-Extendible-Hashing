@@ -27,23 +27,40 @@ namespace ConsoleApplication_Hashing
         {
             switch (Number)
             {
-                case "Žilina": return 0;
-                case "Košice": return 100;
-                case "Martin": return 149;
-                case "Levice": return 187;
-                case "Trnava": return 165;
-                case "Snina": return 182;
-                case "Senica": return 160;
-                case "Nitra": return 108;
-                case "Poprad": return 0;
-                case "Lučenec": return 100;
-                case "Zvolen": return 233;
-                case "Prešov": return 240;
-                case "Púchov": return 183;
-                case "Ilava": return 15;
-                case "Brezno": return 60;
-            }
+                //case "Žilina": return 0;
+                //case "Košice": return 51200 ;
+                //case "Martin": return 38144 ;
+                //case "Levice": return 47872;
+                //case "Trnava": return 42240;
+                //case "Snina": return 46592;
+                //case "Senica": return 40960;
+                //case "Nitra": return 27648;
+                //case "Poprad": return 0;
 
+                //case "Lučenec": return 25600;
+                //case "Zvolen": return 59648;
+                //case "Prešov": return 61440;
+                //case "Púchov": return 46848;
+                //case "Ilava": return 3840;
+                //case "Brezno": return 15360;
+                case "Žilina": return 0;
+                case "Košice": return 38;
+                case "Martin": return 169;
+                case "Levice": return 221;
+                case "Trnava": return 165;
+                case "Snina": return 109;
+                case "Senica": return 5;
+                case "Nitra": return 54;
+                case "Poprad": return 0;
+                case "Lučenec": return 38;
+                case "Zvolen": return 151;
+                case "Prešov": return 15;
+                case "Púchov": return 237;
+                case "Ilava": return 31;
+                case "Brezno": return 60;
+
+
+            }
             return (Number.GetHashCode());
         }
 
