@@ -85,6 +85,8 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 int adresaBloku = Adresar[index];
                 //nacitam blok zo suboru - na zadanej adrese. 
                 Block block = Subor.ReadBlok(adresaBloku);
+                
+                Console.WriteLine("Index v adresari: " + index + ", z hash funkcie: "+ data.GetHash() + ", hlbka suboru: " + HlbkaSuboru + ", hlbka bloku: " + block.Hlbka);
 
                 // 1. Ak sa blok preplni
                 //     => nebuduj skupinu preplnujucich blokov, namiesto toho 
@@ -112,19 +114,19 @@ namespace DataStructuresLibrary.Extendible_Hashing
                    }
                  
                     int hlbkanova = block.Hlbka + 1;
-                   
+
+                    int adresaNovehoBloku = Subor.AlokujNovyBlock();
                     Block novyBlock = new Block(MaxPocetZaznamovVBloku, hlbkanova, _tempRecord);
+                   
                     //podla bajtu na danej adrese v recorde prerozdelim - 0 povodny, 1 - novy blok. 
                     PrerozdelenieBlokov( block, hlbkanova, novyBlock);
-                   
-                    int adresaNovehoBloku = Subor.AlokujNovyBlock();
-                    //     => zaktualizujes adresy v adresari
+                    //zaktualizujem adresy v adresari
                     ZaktualizujAdresyAdresara(data, block, hlbkanova, adresaNovehoBloku);
                     block.Hlbka = hlbkanova;
-                    
+
+                    //zapisem prerozdelenie blokov do suboru. 
                     Subor.WriteBlok(adresaNovehoBloku, novyBlock);
                     Subor.WriteBlok(adresaBloku, block);
-                    //Adresar.Add(adresaNovehoBloku);
                 }
                 else
                 {
@@ -226,15 +228,35 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         private int IndexSubAdresara(int hash, int hlbka)
         {
+            //32 bitove cislo
+            //napr. 1010 0101 0101 0010 10....
             BitArray hassBitArray = new BitArray(BitConverter.GetBytes(hash));
             //potrebujem urobit dekadicky tvar cisla 
-            int cislo = 0;
+
+            Console.Write("Hlbka: " + hlbka + ", prevod hash do binarneho: ");
+
+           
+            int cislo = hassBitArray[0] ? 1 : 0;
             int exponent = 0;
-            for (int i = hlbka - 1; i > 0; i--)
+            //potrebujem previest prvych par bitov na dekadicke cislo
+            //napr. ak je hlbka - 4
+            //1010 => 0 + 2 + 0 + 8 => 10 
+            for (int i = hlbka-1; i > 0; i-- )
             {
-                cislo += hassBitArray[i] ? 2 ^ (exponent) * 1 : 0;
-                exponent++;
+                Console.Write((hassBitArray[i] ? 1:0) + ", ");
+                if (hassBitArray[i])
+                {
+                    cislo += 2 ^ exponent * 1;
+                }
+              exponent++;
             }
+            Console.Write((hassBitArray[0] ? 1 : 0) + ", ");
+            //if (hlbka == 1)
+            //{
+            //    return hassBitArray[0] ? 1 : 0;
+            //}
+            Console.Write("bolo prevedene na cislo : " + cislo);
+            Console.WriteLine();
             return cislo;
         }
         private BitArray GetBitArrayFromHash(int hash)

@@ -25,7 +25,7 @@ namespace ConsoleApplication_Hashing
 
         public override int GetHash()
         {
-            return Number.GetHashCode();
+            return Math.Abs(Number.GetHashCode());
         }
 
         public override byte[] ToByteArray()
