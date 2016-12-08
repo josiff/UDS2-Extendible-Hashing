@@ -195,7 +195,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
             {
                 if (i < aktualnaHlbkaSubor)
                 {
-                    min += hassBitArray[i] ? 2 ^ (exponent) * 1 : 0;
+                    min += hassBitArray[i] ? 2 ^ (exponent) *1  : 0;
                 }
               exponent--;
             }
@@ -213,7 +213,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
             {
                 if (i < aktualnaHlbkaSubor)
                 {
-                    max += hassBitArray[i] ? 2 ^ (exponent)*1 : 0;
+                    max += hassBitArray[i] ? 2 ^ (exponent) * 1 : 0;
                 }
                 else
                 {
@@ -231,33 +231,25 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //32 bitove cislo
             //napr. 1010 0101 0101 0010 10....
             BitArray hassBitArray = new BitArray(BitConverter.GetBytes(hash));
-            //potrebujem urobit dekadicky tvar cisla 
-
+            Console.WriteLine();
             Console.Write("Hlbka: " + hlbka + ", prevod hash do binarneho: ");
-
-           
-            int cislo = hassBitArray[0] ? 1 : 0;
-            int exponent = 0;
             //potrebujem previest prvych par bitov na dekadicke cislo
             //napr. ak je hlbka - 4
             //1010 => 0 + 2 + 0 + 8 => 10 
-            for (int i = hlbka-1; i > 0; i-- )
+            int cislo2 = 0;
+            int ind = hlbka-1;
+            for (int i = 0; i < hlbka ; i++)
             {
-                Console.Write((hassBitArray[i] ? 1:0) + ", ");
                 if (hassBitArray[i])
                 {
-                    cislo += 2 ^ exponent * 1;
+                    cislo2 += Convert.ToInt32(Math.Pow(2, (ind-i))); //http://stackoverflow.com/questions/5283180/how-can-i-convert-bitarray-to-single-int
                 }
-              exponent++;
+                Console.Write(((hassBitArray[i]) ? 1 : 0) + ", ");
             }
-            Console.Write((hassBitArray[0] ? 1 : 0) + ", ");
-            //if (hlbka == 1)
-            //{
-            //    return hassBitArray[0] ? 1 : 0;
-            //}
-            Console.Write("bolo prevedene na cislo : " + cislo);
+          
+            Console.Write("bolo prevedene na cislo : " + cislo2);
             Console.WriteLine();
-            return cislo;
+            return cislo2;
         }
         private BitArray GetBitArrayFromHash(int hash)
         {
