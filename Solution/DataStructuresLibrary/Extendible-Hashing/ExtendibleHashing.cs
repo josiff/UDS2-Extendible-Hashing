@@ -59,46 +59,9 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
 
         #region Methods
-            private int _adresa_posledneho_bloku =0;
         /// <summary>
         /// Operacia Vloz.  
         /// Efektivnost: 1 prenos, v pripade preplenia 2 prenosy. 
-        /// //
-        /// Zakladna idea: 
-        /// 1. Ak sa blok preplni
-        ///     => nebuduj skupinu preplnujucich blokov, namiesto toho 
-        ///     => zvacsi adresovy priestor tak, aby sa adresovali bloky
-        ///         a nie skupiny blokov. 
-        /// //
-        /// 2. Pri preplneni alokuj novy blok 
-        ///     => prirad mu adresu v adresari. 
-        /// // 
-        /// 3. Adresovy priestor zvacsi, tak ze ho
-        ///     =>  zdvojnasobis (D = D + 1) 
-        ///             => alokujes nove pole vacsie o 100%
-        ///             => kazda honota z povodneho pola sa nakopiruje dvakrat
-        ///     => zaktualizujes adresy v adresari.  
-        /// //
-        /// 4. V pripade, ze dojde k 
-        ///     => vyuzitiu vsetkych bitov z vysledku hashovacej fukcie a
-        ///     => zaznam nebolo mozne vlozit
-        ///         => dojde ku kolizii
-        ///    Riesenie kolizii
-        ///     => pouzi oblast preplenia blokov alebo
-        ///     => oblast preplnenia suboru. 
-        /// // 
-        /// 5. Volne bloky uprostred suboru je nutne vyuzivat prednostne
-        ///     => rovnaky postup ako prazdne bloky v prepnujucom subore (staticke heshovanie).
-        ///         => adresy volnych blokov sa udrziavaju v operacnej pamati
-        ///              - pri ukonceni programu sa musia tieto indexy ulozit 
-        ///         => adresy volnych blokov sa zretazuju 
-        ///             => kazdy blok ma svoju adresu na nasledujuci blok 
-        ///             => novy uvolneny blok je pridany na zaciatok zretazenia
-        ///             => pri poziadavke na novy blok je prideleny prvy blok so zretaxenia
-        ///                 max jeden blokovy prenos
-        ///             => v operacnej pamati je ptorebne uchovavat adresu prveho volneho bloku 
-        ///                so zretazenia, ktora sa pri ukonceni programu musi niekde ulozit . 
-        /// 
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -107,108 +70,117 @@ namespace DataStructuresLibrary.Extendible_Hashing
             bool vlozene = false;
             while (!vlozene)
             {
-                //vypocitam hash
-                int hash = data.GetHash();
-                int indexvAdresari = IndexSubAdresara(hash, HlbkaSuboru);
-                int adresaBlokuVSubore = Adresar[indexvAdresari];
+                //
+                //        00   01  10   11      hlbka suboru 2 = hlbka heshovacieho suboru => D
+                //      | 0 | 0 |  1  | 2 |     Adresar - dynamicke pole celych cisiel 
+                //        \  /     |     \
+                //       block1   b2      b3
+                //hlbka:    1      2       2           Hlbky blokov => d
+                //        0 bla    10 mb  11 st        Bloky dat     
+                //        0 hee    10 na  11 wt         
 
-                Console.WriteLine("precitam subor - " + adresaBlokuVSubore);
-                //if (adresaBlokuVSubore == -1)
-                //{
-                //    int adresaNovehoBloku = Subor.AlokujNovyBlock();
-                //    Block novyBlock = new Block(MaxPocetZaznamovVBloku, 1, _tempRecord);
-                //    novyBlock.PridajRecord(data);
-                //    Adresar[indexvAdresari] = adresaNovehoBloku;
+                //vypocitam hash vkladaneho recordu. 
+               //vypocitam index v adresari 
+                int index = IndexSubAdresara(data.GetHash(), HlbkaSuboru);
+                int adresaBloku = Adresar[index];
+                //nacitam blok zo suboru - na zadanej adrese. 
+                Block block = Subor.ReadBlok(adresaBloku);
 
-                //    PocetBlokov++;
-                //    Subor.WriteBlok(adresaNovehoBloku, novyBlock);
-                //    adresaBlokuVSubore = adresaNovehoBloku;
-                //    vlozene = true;
-                //    return true;
-                //}
-                //nacitam blok
-                Block block = Subor.ReadBlok(adresaBlokuVSubore);
-
-                //ak je blok plny
+                // 1. Ak sa blok preplni
+                //     => nebuduj skupinu preplnujucich blokov, namiesto toho 
+                //     => zvacsi adresovy priestor tak, aby sa adresovali bloky
+                //         a nie skupiny blokov. 
                 if (block.JePlny())
                 {
+
+                    // 2. Pri preplneni alokuj novy blok 
+                    //     => prirad mu adresu v adresari. 
+
+                    // 3. Adresovy priestor zvacsi, tak ze ho
+                    //     =>  zdvojnasobis (D = D + 1) 
+                    //             => alokujes nove pole vacsie o 100%
+                    //             => kazda honota z povodneho pola sa nakopiruje dvakrat
+                    //     => zaktualizujes adresy v adresari.  
+
                     //ak hlbka bloku je rovnaka ako hlbka suboru
                     //d == D
-
                     if (block.Hlbka == HlbkaSuboru)
                     {
-                        //Doslo k prepleniu a d = D
-                        //      => zdvojnasob adresar
-                        //      => rozdel blok
-                        //      => vloz zaznam 
-                        //      => reorganizuj cely adresar
-                        //zdvojnasob adresar
-                        List<int> ZdvojnasobAdresar = new List<int>(Adresar.Capacity * 2);
-                        for (int i = 0; i < Adresar.Count; i++)
-                        {
-                            ZdvojnasobAdresar.Add(Adresar[i]);
-                            ZdvojnasobAdresar.Add(Adresar[i]);
-                        }
-                        Adresar = ZdvojnasobAdresar;
+                       //zdvojnasob adresar
+                        ZdvojnasobAdresar();
                         HlbkaSuboru++;
-                      //  PocetBlokov++;
-                        vlozene = false;
-                    }
+                   }
+                    
+                    int hlbkanova = block.Hlbka + 1;
                     //rozdel blok
                     //split 
                     //vytvorenie 
-                    int hlbkanova = block.Hlbka + 1;
+                    
                     Block novyBlock = new Block(MaxPocetZaznamovVBloku, hlbkanova, _tempRecord);
 
-                    for (int i = 0; i < block.PoleRecordov.Count; i++)
-                    {
-                        if (GetBitArrayFromHash(block.PoleRecordov[i].GetHash())[hlbkanova])
-                        {
-                            novyBlock.PridajRecord(block.PoleRecordov[i]);
-                            block.VymazRecord(block.PoleRecordov[i]);
-                        }
-                    }
+                    PrerozdelenieBlokov( block, hlbkanova, novyBlock);
                    
                     int adresaNovehoBloku = Subor.AlokujNovyBlock();
+                    //     => zaktualizujes adresy v adresari
+                    ZaktualizujAdresyAdresara(data, block, hlbkanova, adresaNovehoBloku);
+                    block.Hlbka = hlbkanova;
 
-                    int maxAdresa = MaxIndexPrerozdelenia(block.Hlbka, hlbkanova, data);
-                    int minAdresa = MinIndexPrerozdelenia(block.Hlbka, hlbkanova, data);
-                    //prerozdelenie adries v adresari, aby ukazovali na nove bloky spravne. 
-                    int rozdielBlokov = maxAdresa - minAdresa;
-                    double vysledok = (double)rozdielBlokov / 2;
-                    int vysled = (int)Math.Ceiling(vysledok);
-                    for (int i = vysled + minAdresa; i <= maxAdresa; i++)
-                    {
-                        Adresar[i] = adresaNovehoBloku;
-                    }
-
-
-                    //// PocetBlokov++;
-                    //if (novyBlock.JePrazdny() || block.JePrazdny())
-                    //{
-                    //    block.Hlbka++;
-
-                    //}
-                    //else
-                    //{
-                        block.Hlbka = hlbkanova;
-                    //}
-                
                     Subor.WriteBlok(adresaNovehoBloku, novyBlock);
-                    Subor.WriteBlok(adresaBlokuVSubore, block);
+                    Subor.WriteBlok(adresaBloku, block);
                     //Adresar.Add(adresaNovehoBloku);
-                    vlozene = false;
                 }
                 else
                 {
                     //vloz zaznam
                     block.PridajRecord(data);
-                    Subor.WriteBlok(adresaBlokuVSubore, block);
+                    Subor.WriteBlok(adresaBloku, block);
                     vlozene = true;
                 }
             }
             return vlozene;
         }
+
+        private void PrerozdelenieBlokov(Block block, int hlbkanova, Block novyBlock)
+        {
+            for (int i = 0; i < block.PoleRecordov.Count; i++)
+            {
+                if (GetBitArrayFromHash(block.PoleRecordov[i].GetHash())[hlbkanova])
+                {
+                    novyBlock.PridajRecord(block.PoleRecordov[i]);
+                    block.VymazRecord(block.PoleRecordov[i]);
+                }
+            }
+        }
+
+        private void ZaktualizujAdresyAdresara(Record data, Block block, int hlbkanova, int adresaNovehoBloku)
+        {
+            int maxAdresa = MaxIndexPrerozdelenia(block.Hlbka, hlbkanova, data);
+            int minAdresa = MinIndexPrerozdelenia(block.Hlbka, hlbkanova, data);
+
+            //prerozdelenie adries v adresari, aby ukazovali na nove bloky spravne. 
+            int rozdielBlokov = maxAdresa - minAdresa;
+            double vysledok = (double) rozdielBlokov/2;
+            int vysled = (int) Math.Ceiling(vysledok);
+            for (int i = vysled + minAdresa; i <= maxAdresa; i++)
+            {
+                Adresar[i] = adresaNovehoBloku;
+            }
+        }
+
+        //     =>  zdvojnasobis (D = D + 1) 
+        //             => alokujes nove pole vacsie o 100%
+        //             => kazda honota z povodneho pola sa nakopiruje dvakrat
+        private void ZdvojnasobAdresar()
+        {
+            List<int> ZdvojnasobAdresar = new List<int>(Adresar.Capacity*2);
+            for (int i = 0; i < Adresar.Count; i++)
+            {
+                ZdvojnasobAdresar.Add(Adresar[i]);
+                ZdvojnasobAdresar.Add(Adresar[i]);
+            }
+            Adresar = ZdvojnasobAdresar;
+        }
+
         //vrati mi minimalny index prerozdelenia
         private int MinIndexPrerozdelenia(int aktualnaHlbkaSubor, int novaHlbka, Record data)
         {
