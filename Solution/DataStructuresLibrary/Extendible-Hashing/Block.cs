@@ -138,7 +138,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// </summary>
         /// <param name="byteArray">pole bytov<param>
         /// <param name="hasAdress"></param>
-        public void FromByteArray(byte[] byteArray)
+        public Block FromByteArray(byte[] byteArray)
         {
             int temp_index = 0;
             //adresa prveho
@@ -168,6 +168,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 }
                 
             }
+            return this;
         }
         #endregion
 

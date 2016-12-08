@@ -28,7 +28,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         public ExFile Subor { get; set; }
 
         public int VelkostZaznamu { get; set; }
-        public int MaxPocetZaznamovVBloku { get;private set; }
+        public int MaxPocetZaznamovVBloku { get; private set; }
         private Record _tempRecord;
         #endregion
 
@@ -39,7 +39,17 @@ namespace DataStructuresLibrary.Extendible_Hashing
             _tempRecord = record;
             Subor = new ExFile(filename, maxPocetZaznamovBloku, record, createNew);
             Adresar = new List<int>(maxPocetZaznamovBloku);
-            Adresar.Add(-1);
+            Adresar.Add(0);
+            Adresar.Add(1);
+            PocetBlokov++;
+            PocetBlokov++;
+            HlbkaSuboru++;
+            Subor.AlokujNovyBlock();
+            Subor.AlokujNovyBlock();
+
+            Block b = new Block(maxPocetZaznamovBloku, record);
+            Subor.WriteBlok(0, b);
+            Subor.WriteBlok(1, b);
         }
 
         /// <summary>
@@ -98,26 +108,26 @@ namespace DataStructuresLibrary.Extendible_Hashing
             {
                 //vypocitam hash
                 int hash = data.GetHash();
-                int indexvAdresari =   IndexSubAdresara(hash, HlbkaSuboru);
-                int adresaBlokuVSubore =  Adresar[indexvAdresari];
-                if (adresaBlokuVSubore == -1)
-                {
-                    int adresaNovehoBloku = Subor.AlokujNovyBlock();
-                    Block novyBlock = new Block(MaxPocetZaznamovVBloku, 1, _tempRecord);
-                    novyBlock.PridajRecord(data);
-                    Adresar[indexvAdresari] = adresaNovehoBloku;
+                int indexvAdresari = IndexSubAdresara(hash, HlbkaSuboru);
+                int adresaBlokuVSubore = Adresar[indexvAdresari];
+                //if (adresaBlokuVSubore == -1)
+                //{
+                //    int adresaNovehoBloku = Subor.AlokujNovyBlock();
+                //    Block novyBlock = new Block(MaxPocetZaznamovVBloku, 1, _tempRecord);
+                //    novyBlock.PridajRecord(data);
+                //    Adresar[indexvAdresari] = adresaNovehoBloku;
 
-                    PocetBlokov++;
-                    Subor.WriteBlok(adresaNovehoBloku, novyBlock);
-                    adresaBlokuVSubore = adresaNovehoBloku;
-                    vlozene = true;
-                    return true;
-                }
+                //    PocetBlokov++;
+                //    Subor.WriteBlok(adresaNovehoBloku, novyBlock);
+                //    adresaBlokuVSubore = adresaNovehoBloku;
+                //    vlozene = true;
+                //    return true;
+                //}
                 //nacitam blok
                 Block block = Subor.ReadBlok(adresaBlokuVSubore);
 
                 //ak je blok plny
-                if (block.JePlny() )
+                if (block.JePlny())
                 {
                     //ak hlbka bloku je rovnaka ako hlbka suboru
                     //d == D
@@ -130,7 +140,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
                         //      => vloz zaznam 
                         //      => reorganizuj cely adresar
                         //zdvojnasob adresar
-                        List<int> ZdvojnasobAdresar = new List<int>(Adresar.Capacity*2);
+                        List<int> ZdvojnasobAdresar = new List<int>(Adresar.Capacity * 2);
                         for (int i = 0; i < Adresar.Count; i++)
                         {
                             ZdvojnasobAdresar.Add(Adresar[i]);
@@ -138,16 +148,21 @@ namespace DataStructuresLibrary.Extendible_Hashing
                         }
                         Adresar = ZdvojnasobAdresar;
                         HlbkaSuboru++;
+                        PocetBlokov++;
 
                         vlozene = false;
                     }
-                    
+
                     //rozdel blok
                     //split 
                     //vytvorenie 
+
+
                     int hlbkanova = block.Hlbka + 1;
+
+
                     Block novyBlock = new Block(MaxPocetZaznamovVBloku, hlbkanova, _tempRecord);
-                    
+
                     for (int i = 0; i < block.PoleRecordov.Count; i++)
                     {
                         if (GetBitArrayFromHash(block.PoleRecordov[i].GetHash())[hlbkanova])
@@ -156,13 +171,25 @@ namespace DataStructuresLibrary.Extendible_Hashing
                             block.VymazRecord(block.PoleRecordov[i]);
                         }
                     }
-                    int adresaNovehoBloku =  Subor.AlokujNovyBlock();
-                    PocetBlokov++;
-                    novyBlock.Hlbka = hlbkanova;
+                    int adresaNovehoBloku = Subor.AlokujNovyBlock();
+
+                    int maxAdresa = MaxIndexPrerozdelenia(block.Hlbka, hlbkanova, data);
+                    int minAdresa = MinIndexPrerozdelenia(block.Hlbka, hlbkanova, data);
+                    //prerozdelenie adries v adresari, aby ukazovali na nove bloky spravne. 
+                    int rozdielBlokov = maxAdresa - minAdresa;
+                    double vysledok = (double)rozdielBlokov / 2;
+                    int vysled = (int)Math.Ceiling(vysledok);
+                    for (int i = vysled + minAdresa; i <= maxAdresa; i++)
+                    {
+                        Adresar[i] = adresaNovehoBloku;
+                    }
+                    
+
+                   // PocetBlokov++;
                     block.Hlbka = hlbkanova;
                     Subor.WriteBlok(adresaNovehoBloku, novyBlock);
                     Subor.WriteBlok(adresaBlokuVSubore, block);
-                    Adresar.Add(adresaNovehoBloku);
+                    //Adresar.Add(adresaNovehoBloku);
                     vlozene = false;
                 }
                 else
@@ -175,6 +202,50 @@ namespace DataStructuresLibrary.Extendible_Hashing
             }
             return vlozene;
         }
+        //vrati mi minimalny index prerozdelenia
+        private int MinIndexPrerozdelenia(int aktualnaHlbkaSubor, int novaHlbka, Record data)
+        {
+            int min = 0;
+
+            BitArray hassBitArray = new BitArray(BitConverter.GetBytes(data.GetHash()));
+            //potrebujem urobit dekadicky tvar cisla 
+           
+            int exponent = novaHlbka ;
+            for (int i = 0; i< novaHlbka; i++)
+            {
+                if (i < aktualnaHlbkaSubor)
+                {
+                    min += hassBitArray[i] ? 2 ^ (exponent) * 1 : 0;
+                }
+              
+                exponent--;
+            }
+            
+            return min;
+        }
+        private int MaxIndexPrerozdelenia(int aktualnaHlbkaSubor, int novaHlbka, Record data)
+        {
+            int max = 0;
+
+            BitArray hassBitArray = new BitArray(BitConverter.GetBytes(data.GetHash()));
+            //potrebujem urobit dekadicky tvar cisla 
+            int exponent = novaHlbka;
+            for (int i = 0; i < novaHlbka; i++)
+            {
+                if (i < aktualnaHlbkaSubor)
+                {
+                    max += hassBitArray[i] ? 2 ^ (exponent)*1 : 0;
+                }
+                else
+                {
+                    max += 2 ^ (exponent) * 1;
+                }
+
+                exponent--;
+            }
+
+            return max;
+        }
 
         private int IndexSubAdresara(int hash, int hlbka)
         {
@@ -182,20 +253,20 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //potrebujem urobit dekadicky tvar cisla 
             int cislo = 0;
             int exponent = 0;
-            for (int i = hlbka - 1; i >= 0; i--)
+            for (int i = hlbka - 1; i > 0; i--)
             {
-                cislo += hassBitArray[i] ? 2 ^ (exponent)*1 : 0;
+                cislo += hassBitArray[i] ? 2 ^ (exponent) * 1 : 0;
                 exponent++;
             }
             return cislo;
         }
         private BitArray GetBitArrayFromHash(int hash)
         {
-           return new BitArray(BitConverter.GetBytes(hash));
-           }
+            return new BitArray(BitConverter.GetBytes(hash));
+        }
         public override string ToString()
         {
-           string s = $"{nameof(HlbkaSuboru)}: {HlbkaSuboru}, {nameof(PocetBlokov)}: {PocetBlokov}, {nameof(VelkostZaznamu)}: {VelkostZaznamu}, {nameof(MaxPocetZaznamovVBloku)}: {MaxPocetZaznamovVBloku}";
+            string s = $"{nameof(HlbkaSuboru)}: {HlbkaSuboru}, {nameof(PocetBlokov)}: {PocetBlokov}, {nameof(VelkostZaznamu)}: {VelkostZaznamu}, {nameof(MaxPocetZaznamovVBloku)}: {MaxPocetZaznamovVBloku}";
             StringBuilder sb = new StringBuilder();
             //vypisem jednotlive bloky
             //prechadzam vsetky bloky a postupne ich citam zo suboru. 
@@ -220,12 +291,12 @@ namespace DataStructuresLibrary.Extendible_Hashing
                     sb.AppendLine(b.ToString());
 
                 }
-                
+
             }
-           
-            return s +sb.ToString();
-       
-    }
+
+            return s + sb.ToString();
+
+        }
 
         /// <summary>
         /// Operacia Vymaz

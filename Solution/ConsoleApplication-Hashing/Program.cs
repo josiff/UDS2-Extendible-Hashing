@@ -38,16 +38,35 @@ namespace ConsoleApplication_Hashing
           //  bloktemp.PridajRecord((Record) auto2);
           //  bloktemp.PridajRecord((Record) auto);
         
-          //  Record r = blok.NajdiRecord((Record)auto);
+         // Record r = blok.NajdiRecord((Record)auto);
           Random rand = new Random();
+          //Test  auto = new Test("test ");
+          //  Block block = new Block(40, 0,auto);
+          //  for (int i = 0; i < 20; i++)
+          //  {
+          //      auto = new Test("test "+i);
+          //      block.PridajRecord(auto);
+          //  }
+
+          //  Console.WriteLine(block.ToString());
+          //  byte[] array = block.ToByteArray();
+          //  Block b = new Block(40, 0, auto);
+          //  Block fromArray = b.FromByteArray(array);
+          //  Console.WriteLine(b.ToString());
 
             Record r = new Test("prvy rec");
+            Record r1 = new Test("druhy1322");
+            Record r2 = new Test("treti2142");
+            Record r3 = new Test("str24322");
+            Record r4 = new Test("piaty32e");
+
             string filename = "test_" + rand.Next(3, 5454545)*rand.Next(7)+".txt";
-            ExtendibleHashing<Test> hashing = new ExtendibleHashing<Test>(filename.Trim(':'), 3, r, true);
+            ExtendibleHashing<Test> hashing = new ExtendibleHashing<Test>(filename, 3, r, true);
             Console.WriteLine("Pred Vkladanim");
             Console.WriteLine();
             Console.WriteLine(hashing.ToString());
-            Record r1 = new Test("druhy1322");
+
+            
             Console.WriteLine(hashing.ToString());
 
             hashing.Insert(r);
@@ -55,7 +74,7 @@ namespace ConsoleApplication_Hashing
             Console.WriteLine();
             Console.WriteLine("Vlozenie jedneho zaznamu. ");
             Console.WriteLine(hashing.ToString());
-            Record r2 = new Test("treti2142");
+            
           
             hashing.Insert(r1);
             Console.WriteLine();
@@ -68,8 +87,7 @@ namespace ConsoleApplication_Hashing
             Console.WriteLine("Vlozenie troch zaznamov. ");
 
             Console.WriteLine(hashing.ToString());
-            Record r3 = new Test("str24322");
-            Record r4 = new Test("piaty32e");
+           
             hashing.Insert(r3);
             Console.WriteLine();
             Console.WriteLine();
@@ -79,9 +97,7 @@ namespace ConsoleApplication_Hashing
             Console.WriteLine();
             Console.WriteLine("Po vlozeni piatych: ");
             Console.WriteLine(hashing.ToString());
-
-
-         
+            
             Console.ReadLine();
             Console.ReadKey();
         }

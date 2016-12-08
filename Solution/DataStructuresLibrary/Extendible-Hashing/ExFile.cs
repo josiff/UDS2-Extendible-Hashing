@@ -33,10 +33,10 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //je to index od ktoreho budem seekovat.
             int temp = _tempBlock.GetSize();
             //seeknem na dany index
-            int offset = (adresa == 0 || adresa == -1)?0: temp*adresa-temp;
+            int offset = temp*adresa;
            _fileStream.Seek(offset, SeekOrigin.Begin);
             //precitam dane byty zo suboru
-            _fileStream.Read(poleBytov, offset, temp);
+            _fileStream.Read(poleBytov, 0, temp);
             //nastavim blok z danych dat. 
             _tempBlock.FromByteArray(poleBytov);
             //vratim blok ktory som precitala.
@@ -54,8 +54,8 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //zapisem dane byty na dany index
             byte[] poleBytov = new byte[block.GetSize()];
             poleBytov = block.ToByteArray();
-         ///   _fileStream.Seek(odKial, SeekOrigin.Begin);
-            _fileStream.Write(poleBytov, odKial, block.GetSize());
+            _fileStream.Seek(odKial, SeekOrigin.Begin);
+            _fileStream.Write(poleBytov, 0, block.GetSize());
         }
 
         public int AlokujNovyBlock()

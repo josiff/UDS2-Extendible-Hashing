@@ -215,8 +215,9 @@ namespace DataStructureLogic
                 VPatrani = BitConverter.ToBoolean(byteArray, temp_index);
                 temp_index += _pocet_bajtov_vpatrani;
                 //koniec platnosti stk
+            string aaa = Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bajtov_datum_stk);
                 KoniecPlatnostiSTK =
-                DateTime.ParseExact(Encoding.UTF8.GetString(byteArray, temp_index, _pocet_bajtov_datum_stk), "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                DateTime.ParseExact(aaa, "dd.MM.yyyy", CultureInfo.InvariantCulture);
             return new Auto(EvidencneCisloVozidla, VinCislo, PocetNaprav, PrevadzkovaHmotnost, VPatrani, KoniecPlatnostiSTK, KoniecPlatnostiEK);
         }
         #endregion
