@@ -42,7 +42,7 @@ namespace ConsoleApplication_Hashing
             Test auto = new Test("test ");
             Random rand = new Random();
 
-            ExtendibleHashing<Test> hashing2 = new ExtendibleHashing<Test>("test"+rand.Next(999)+"_file.txt",12, auto, true);
+            ExtendibleHashing<Test> hashing2 = new ExtendibleHashing<Test>("test"+rand.Next(999)+"_file.txt",5, auto, true);
            
             Block block = new Block(40, 0, auto);
             for (int i = 0; i < 20; i++)
@@ -64,11 +64,18 @@ namespace ConsoleApplication_Hashing
             for (int i = 0; i < 20; i++)
             {
                 kluc = new Test("test " + i);
-                Console.WriteLine(hashing2.Search(kluc)?.ToString());
+                Record h = hashing2.Search(kluc);
+                if (h != null)
+                {
+                    Console.WriteLine(h?.ToString());
+                }
+                else
+                {
+                    Console.WriteLine("ZAZNAM SA NENASIEL!!!");
+                }
+               
             }
-
-
-
+            
 
             Record r = new Test("prvy rec");
             Record r1 = new Test("druhy1322");
@@ -79,38 +86,26 @@ namespace ConsoleApplication_Hashing
             string filename = "test_" + rand.Next(3, 5454545) * rand.Next(7) + ".txt";
             ExtendibleHashing<Test> hashing = new ExtendibleHashing<Test>(filename, 1, r, true);
             Console.WriteLine("Pred Vkladanim");
-            Console.WriteLine();
             Console.WriteLine(hashing.ToString());
-
-
-            Console.WriteLine(hashing.ToString());
-
+            
             hashing.Insert(r);
-            Console.WriteLine();
-            Console.WriteLine();
             Console.WriteLine("Vlozenie jedneho zaznamu. ");
             Console.WriteLine(hashing.ToString());
 
 
             hashing.Insert(r1);
-            Console.WriteLine();
-            Console.WriteLine();
             Console.WriteLine("Vlozenie dvoch zaznamov. ");
             Console.WriteLine(hashing.ToString());
 
             hashing.Insert(r2);
-            Console.WriteLine();
             Console.WriteLine("Vlozenie troch zaznamov. ");
-
             Console.WriteLine(hashing.ToString());
 
             hashing.Insert(r3);
-            Console.WriteLine();
-            Console.WriteLine();
             Console.WriteLine("Vlozenie styroch zaznamov. ");
             Console.WriteLine(hashing.ToString());
+
             hashing.Insert(r4);
-            Console.WriteLine();
             Console.WriteLine("Po vlozeni piatych: ");
             Console.WriteLine(hashing.ToString());
 

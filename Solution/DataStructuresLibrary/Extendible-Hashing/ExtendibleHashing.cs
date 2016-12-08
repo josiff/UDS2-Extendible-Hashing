@@ -86,7 +86,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 //nacitam blok zo suboru - na zadanej adrese. 
                 Block block = Subor.ReadBlok(adresaBloku);
                 
-                Console.WriteLine("Index v adresari: " + index + ", z hash funkcie: "+ data.GetHash() + ", hlbka suboru: " + HlbkaSuboru + ", hlbka bloku: " + block.Hlbka);
+               // Console.WriteLine("Index v adresari: " + index + ", z hash funkcie: "+ data.GetHash() + ", hlbka suboru: " + HlbkaSuboru + ", hlbka bloku: " + block.Hlbka);
 
                 // 1. Ak sa blok preplni
                 //     => nebuduj skupinu preplnujucich blokov, namiesto toho 
@@ -231,8 +231,8 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //32 bitove cislo
             //napr. 1010 0101 0101 0010 10....
             BitArray hassBitArray = new BitArray(BitConverter.GetBytes(hash));
-            Console.WriteLine();
-            Console.Write("Hlbka: " + hlbka + ", prevod hash do binarneho: ");
+           // Console.WriteLine();
+            //Console.Write("Hlbka: " + hlbka + ", prevod hash do binarneho:\t");
             //potrebujem previest prvych par bitov na dekadicke cislo
             //napr. ak je hlbka - 4
             //1010 => 0 + 2 + 0 + 8 => 10 
@@ -244,11 +244,11 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 {
                     cislo2 += Convert.ToInt32(Math.Pow(2, (ind-i))); //http://stackoverflow.com/questions/5283180/how-can-i-convert-bitarray-to-single-int
                 }
-                Console.Write(((hassBitArray[i]) ? 1 : 0) + ", ");
+           //     Console.Write(((hassBitArray[i]) ? 1 : 0) + "");
             }
           
-            Console.Write("bolo prevedene na cislo : " + cislo2);
-            Console.WriteLine();
+          //  Console.Write(", bolo prevedene na cislo : \t" + cislo2);
+           // Console.WriteLine();
             return cislo2;
         }
         private BitArray GetBitArrayFromHash(int hash)
