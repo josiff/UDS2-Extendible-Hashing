@@ -110,21 +110,18 @@ namespace DataStructuresLibrary.Extendible_Hashing
                         ZdvojnasobAdresar();
                         HlbkaSuboru++;
                    }
-                    
+                 
                     int hlbkanova = block.Hlbka + 1;
-                    //rozdel blok
-                    //split 
-                    //vytvorenie 
-                    
+                   
                     Block novyBlock = new Block(MaxPocetZaznamovVBloku, hlbkanova, _tempRecord);
-
+                    //podla bajtu na danej adrese v recorde prerozdelim - 0 povodny, 1 - novy blok. 
                     PrerozdelenieBlokov( block, hlbkanova, novyBlock);
                    
                     int adresaNovehoBloku = Subor.AlokujNovyBlock();
                     //     => zaktualizujes adresy v adresari
                     ZaktualizujAdresyAdresara(data, block, hlbkanova, adresaNovehoBloku);
                     block.Hlbka = hlbkanova;
-
+                    
                     Subor.WriteBlok(adresaNovehoBloku, novyBlock);
                     Subor.WriteBlok(adresaBloku, block);
                     //Adresar.Add(adresaNovehoBloku);
@@ -167,9 +164,11 @@ namespace DataStructuresLibrary.Extendible_Hashing
             }
         }
 
-        //     =>  zdvojnasobis (D = D + 1) 
-        //             => alokujes nove pole vacsie o 100%
-        //             => kazda honota z povodneho pola sa nakopiruje dvakrat
+        /// <summary>
+        /// Zdvojnasobenie adresaru (D = D + 1) 
+        //   => alokujes nove pole vacsie o 100%
+        //   => kazda honota z povodneho pola sa nakopiruje dvakrat
+        /// </summary>
         private void ZdvojnasobAdresar()
         {
             List<int> ZdvojnasobAdresar = new List<int>(Adresar.Capacity*2);
@@ -196,8 +195,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 {
                     min += hassBitArray[i] ? 2 ^ (exponent) * 1 : 0;
                 }
-              
-                exponent--;
+              exponent--;
             }
             
             return min;
