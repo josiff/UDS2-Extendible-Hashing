@@ -43,7 +43,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
             Adresar.Add(1);
             PocetBlokov++;
             PocetBlokov++;
-            HlbkaSuboru++;
+            HlbkaSuboru =1;
             Subor.AlokujNovyBlock();
             Subor.AlokujNovyBlock();
 
@@ -59,6 +59,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
 
         #region Methods
+            private int _adresa_posledneho_bloku =0;
         /// <summary>
         /// Operacia Vloz.  
         /// Efektivnost: 1 prenos, v pripade preplenia 2 prenosy. 
@@ -110,6 +111,8 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 int hash = data.GetHash();
                 int indexvAdresari = IndexSubAdresara(hash, HlbkaSuboru);
                 int adresaBlokuVSubore = Adresar[indexvAdresari];
+
+                Console.WriteLine("precitam subor - " + adresaBlokuVSubore);
                 //if (adresaBlokuVSubore == -1)
                 //{
                 //    int adresaNovehoBloku = Subor.AlokujNovyBlock();
@@ -148,19 +151,13 @@ namespace DataStructuresLibrary.Extendible_Hashing
                         }
                         Adresar = ZdvojnasobAdresar;
                         HlbkaSuboru++;
-                        PocetBlokov++;
-
+                      //  PocetBlokov++;
                         vlozene = false;
                     }
-
                     //rozdel blok
                     //split 
                     //vytvorenie 
-
-
                     int hlbkanova = block.Hlbka + 1;
-
-
                     Block novyBlock = new Block(MaxPocetZaznamovVBloku, hlbkanova, _tempRecord);
 
                     for (int i = 0; i < block.PoleRecordov.Count; i++)
@@ -171,6 +168,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
                             block.VymazRecord(block.PoleRecordov[i]);
                         }
                     }
+                   
                     int adresaNovehoBloku = Subor.AlokujNovyBlock();
 
                     int maxAdresa = MaxIndexPrerozdelenia(block.Hlbka, hlbkanova, data);
@@ -183,10 +181,19 @@ namespace DataStructuresLibrary.Extendible_Hashing
                     {
                         Adresar[i] = adresaNovehoBloku;
                     }
-                    
 
-                   // PocetBlokov++;
-                    block.Hlbka = hlbkanova;
+
+                    //// PocetBlokov++;
+                    //if (novyBlock.JePrazdny() || block.JePrazdny())
+                    //{
+                    //    block.Hlbka++;
+
+                    //}
+                    //else
+                    //{
+                        block.Hlbka = hlbkanova;
+                    //}
+                
                     Subor.WriteBlok(adresaNovehoBloku, novyBlock);
                     Subor.WriteBlok(adresaBlokuVSubore, block);
                     //Adresar.Add(adresaNovehoBloku);
@@ -229,7 +236,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
             BitArray hassBitArray = new BitArray(BitConverter.GetBytes(data.GetHash()));
             //potrebujem urobit dekadicky tvar cisla 
-            int exponent = novaHlbka;
+            int exponent = novaHlbka+1;
             for (int i = 0; i < novaHlbka; i++)
             {
                 if (i < aktualnaHlbkaSubor)
@@ -338,13 +345,17 @@ namespace DataStructuresLibrary.Extendible_Hashing
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public Record Search(int kluc)
+        public Record Search(Record hladanyZaznam)
         {
             Record findRecord = null;
             //vypocitaj prvych D bitov hodnoty hesovacej funkcie 
             //D bit -> Hlbka adresara 
             //vypocitaj I=hD(K)
-            byte[] I = BitConverter.GetBytes(kluc); //todo
+            int hash = ((Record)hladanyZaznam).GetHash();
+            int indexvAdresari = IndexSubAdresara(hash, HlbkaSuboru);
+            //V bloku P[i] najdi zaznam s klucom K. 
+            int adresaBlokuVSubore = Adresar[indexvAdresari];
+            Block block = Subor.ReadBlok(adresaBlokuVSubore);
 
             //pomocou adresara spristupni blok P[i] 
             // spristupni prvych D bitov 
@@ -353,25 +364,12 @@ namespace DataStructuresLibrary.Extendible_Hashing
             //miesta v subore, kde sa nachadza blok,ktory by mal 
             //obsahovat hladany zaznam
 
-            int index = BitConverter.ToInt32(I, HlbkaSuboru);
-
-            Block Pi = null;
-
-            //V bloku P[i] najdi zaznam s klucom K. 
-            bool found = false;
-            foreach (var x in Adresar)
+            foreach (var x in block.PoleRecordov)
             {
-                if (x == index)
+                if (x.Equals(hladanyZaznam))
                 {
-                    found = true;
-                    break;
+                    return x;
                 }
-            }
-
-            if (!found) return null;
-
-            foreach (var x in Pi.PoleRecordov)
-            {
             }
 
             return findRecord;

@@ -22,7 +22,6 @@ namespace DataStructuresLibrary.Extendible_Hashing
         public abstract int GetSize();
 
         public abstract int GetHash();
-
         //metody specificke pre record. 
         /// <summary>
         /// Abstraktna metoda, ktora spracuje/skonvertuje dany zaznam a vrati ho ako pole bytov. 
