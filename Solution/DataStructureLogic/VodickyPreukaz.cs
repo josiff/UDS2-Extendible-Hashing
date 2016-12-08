@@ -86,7 +86,8 @@ namespace DataStructureLogic
         //https://msdn.microsoft.com/en-us/library/system.object.gethashcode(v=vs.100).aspx
         public override int GetHash()
         {
-            return ((int)EvidencneCisloPreukazu ^ (int)(EvidencneCisloPreukazu >> 32));
+            //return ((int)EvidencneCisloPreukazu ^ (int)(EvidencneCisloPreukazu >> 32));
+            return EvidencneCisloPreukazu;
         }
 
 

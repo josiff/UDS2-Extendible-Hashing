@@ -25,6 +25,25 @@ namespace ConsoleApplication_Hashing
 
         public override int GetHash()
         {
+            switch (Number)
+            {
+                case "Žilina": return 0;
+                case "Košice": return 100;
+                case "Martin": return 149;
+                case "Levice": return 187;
+                case "Trnava": return 165;
+                case "Snina": return 182;
+                case "Senica": return 160;
+                case "Nitra": return 108;
+                case "Poprad": return 0;
+                case "Lučenec": return 100;
+                case "Zvolen": return 233;
+                case "Prešov": return 240;
+                case "Púchov": return 183;
+                case "Ilava": return 15;
+                case "Brezno": return 60;
+            }
+
             return (Number.GetHashCode());
         }
 

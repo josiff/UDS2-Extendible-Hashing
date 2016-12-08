@@ -76,6 +76,10 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 sb.AppendLine("Block c: " + (i + 1));
                 sb.AppendLine(b.ToString());
             }
+
+            sb.AppendLine("Vypis celeho suboru:");
+            string text = System.IO.File.ReadAllText(_filename);
+            sb.AppendLine(text);
             return sb.ToString();
         }
     }
