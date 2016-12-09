@@ -118,12 +118,13 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
                     int adresaNovehoBloku = Subor.AlokujNovyBlock();
                     Block novyBlock = new Block(MaxPocetZaznamovVBloku, hlbkanova, _tempRecord);
-                   
+
                     //podla bajtu na danej adrese v recorde prerozdelim - 0 povodny, 1 - novy blok. 
+                    block.Hlbka = hlbkanova;
+
                     PrerozdelenieBlokov( block, hlbkanova, novyBlock);
                     //zaktualizujem adresy v adresari
                     ZaktualizujAdresyAdresara(data, block, adresaNovehoBloku, adresaNovehoBloku);
-                    block.Hlbka = hlbkanova;
 
                     //zapisem prerozdelenie blokov do suboru. 
                     Subor.WriteBlok(adresaNovehoBloku, novyBlock);
