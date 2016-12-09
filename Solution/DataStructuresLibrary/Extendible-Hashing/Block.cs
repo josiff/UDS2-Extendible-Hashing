@@ -68,7 +68,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-
+            sb.AppendLine("Hlbka: " + Hlbka + ", Volne miesto: " + VolneMiesto());
             //poradove cislo zaznamu
             int poradovneCisloZaznamu = 0;
             foreach (var x in PoleRecordov)
@@ -77,7 +77,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 if (x != null)
                 {
                     sb.AppendLine("Record: " + poradovneCisloZaznamu + "\t"
-                             + x.ToString());
+                             + x.ToString() +"\t" + x.GetHash() + "\t");
                 }
             }
 

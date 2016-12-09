@@ -86,7 +86,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
                 //nacitam blok zo suboru - na zadanej adrese. 
                 Block block = Subor.ReadBlok(adresaBloku);
                 
-                Console.WriteLine("Index v adresari: " + index + ", z hash funkcie: "+ data.GetHash() + ", hlbka suboru: " + HlbkaSuboru + ", hlbka bloku: " + block.Hlbka);
+              //  Console.WriteLine("Index v adresari: " + index + ", z hash funkcie: "+ data.GetHash() + ", hlbka suboru: " + HlbkaSuboru + ", hlbka bloku: " + block.Hlbka);
 
                 // 1. Ak sa blok preplni
                 //     => nebuduj skupinu preplnujucich blokov, namiesto toho 
@@ -111,6 +111,7 @@ namespace DataStructuresLibrary.Extendible_Hashing
                        //zdvojnasob adresar
                         ZdvojnasobAdresar();
                         HlbkaSuboru++;
+                      //  Console.WriteLine("Bol zdvojeny adresar a zvysena hlbka suboru na: " + HlbkaSuboru);
                    }
                  
                     int hlbkanova = block.Hlbka + 1;
@@ -121,12 +122,13 @@ namespace DataStructuresLibrary.Extendible_Hashing
                     //podla bajtu na danej adrese v recorde prerozdelim - 0 povodny, 1 - novy blok. 
                     PrerozdelenieBlokov( block, hlbkanova, novyBlock);
                     //zaktualizujem adresy v adresari
-                    ZaktualizujAdresyAdresara(data, block, hlbkanova, adresaNovehoBloku);
+                    ZaktualizujAdresyAdresara(data, block, adresaNovehoBloku, adresaNovehoBloku);
                     block.Hlbka = hlbkanova;
 
                     //zapisem prerozdelenie blokov do suboru. 
                     Subor.WriteBlok(adresaNovehoBloku, novyBlock);
                     Subor.WriteBlok(adresaBloku, block);
+                    vlozene = false;
                 }
                 else
                 {
@@ -153,16 +155,16 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
         private void ZaktualizujAdresyAdresara(Record data, Block block, int hlbkanova, int adresaNovehoBloku)
         {
-            int maxAdresa = MaxIndexPrerozdelenia(block.Hlbka, hlbkanova, data);
-            int minAdresa = MinIndexPrerozdelenia(block.Hlbka, hlbkanova, data);
+            int maxAdresa = MaxIndexPrerozdelenia(block.Hlbka, HlbkaSuboru, data);
+            int minAdresa = MinIndexPrerozdelenia( block.Hlbka, HlbkaSuboru, data);
 
             //prerozdelenie adries v adresari, aby ukazovali na nove bloky spravne. 
             int rozdielBlokov = maxAdresa - minAdresa;
            
             double vysledok = (double) rozdielBlokov/2;
             int vysled = (int) Math.Ceiling(vysledok);
-            Console.WriteLine("min : " + minAdresa + ", max: " + maxAdresa + "rozdiel: " + vysledok + " zaokruhlene: " + vysled);
-            Console.WriteLine("zmenene nasledovne adresy: ");
+        //    Console.WriteLine("min : " + minAdresa + ", max: " + maxAdresa + "rozdiel: " + vysledok + " zaokruhlene: " + vysled);
+           // Console.WriteLine("zmenene nasledovne adresy: ");
             for (int i = vysled + minAdresa; i <=  maxAdresa; i++)
             {
                 Console.Write( i +"-" + Adresar[i]+"=>");
@@ -190,19 +192,20 @@ namespace DataStructuresLibrary.Extendible_Hashing
         }
 
         //vrati mi minimalny index prerozdelenia
-        private int MinIndexPrerozdelenia(int aktualnaHlbkaSubor, int novaHlbka, Record data)
+        private int MinIndexPrerozdelenia(int hlbkaBloku, int aktualnaHlbkaSubor, Record data)
         {
             int min = 0;
 
             BitArray hassBitArray = new BitArray(BitConverter.GetBytes(data.GetHash()));
             //potrebujem urobit dekadicky tvar cisla 
 
-            int exponent = novaHlbka;
-            for (int i = 0; i < novaHlbka; i++)
+            int exponent = hlbkaBloku;
+            for (int i = 0; i < hlbkaBloku; i++)
             {
                 if (i < aktualnaHlbkaSubor)
                 {
-                    min += hassBitArray[i] ? 2 ^ (exponent) * 1 : 0;
+                    //   min += hassBitArray[i] ? 2 ^ (exponent) * 1 : 0;
+                    min += hassBitArray[i] ? Convert.ToInt32(Math.Pow(2, ((exponent)))) : 0;
                 }
 
                 exponent--;
@@ -210,34 +213,33 @@ namespace DataStructuresLibrary.Extendible_Hashing
 
             return min;
         }
-        private int MaxIndexPrerozdelenia(int aktualnaHlbkaSubor, int novaHlbka, Record data)
+        private int MaxIndexPrerozdelenia(int hlbkaBloku,  int aktualnaHlbkaSubor, Record data)
         {
             int max = 0;
 
             BitArray hassBitArray = new BitArray(BitConverter.GetBytes(data.GetHash()));
             //potrebujem urobit dekadicky tvar cisla 
-            int exponent = novaHlbka+1;
-            for (int i = 0; i < novaHlbka; i++)
+            //1111
+            int exponent = hlbkaBloku+1;
+            for (int i = 0; i < hlbkaBloku; i++)
             {
                 if (i < aktualnaHlbkaSubor)
                 {
-                    max += hassBitArray[i] ? 2 ^ (exponent) * 1 : 0;
+                    max += hassBitArray[i] ? Convert.ToInt32(Math.Pow(2, (exponent))) : 0;
                 }
                 else
                 {
-                    max += 2 ^ (exponent) * 1;
+                    max += Convert.ToInt32(Math.Pow(2, (exponent)));
                 }
-
                 exponent--;
             }
-
             return max;
         }
 
         private int IndexSubAdresara(int hash, int hlbka)
         {
             //32 bitove cislo
-            byte[] cislo = BitConverter.GetBytes((Int16) hash);
+            byte[] cislo = BitConverter.GetBytes(hash);
            //napr. 1010 0101 0101 0010 10....
             BitArray hassBitArray = new BitArray(cislo);
            // Console.WriteLine();

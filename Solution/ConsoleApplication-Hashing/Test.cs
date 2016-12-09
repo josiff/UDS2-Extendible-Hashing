@@ -61,7 +61,7 @@ namespace ConsoleApplication_Hashing
 
 
             }
-            return (Number.GetHashCode());
+            return Math.Abs(Number.GetHashCode());
         }
 
         public override byte[] ToByteArray()
